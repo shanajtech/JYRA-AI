@@ -1,3 +1,4 @@
+import BrandLogo from './BrandLogo';
 import MemoryBackup from '../workspace/MemoryBackup';
 import CompanionHome,{FloatingCompanion} from './CompanionHome';
 import DeveloperPage from './DeveloperPage';
@@ -52,7 +53,7 @@ export default function FigmaDashboard({initialChatDraft='',initialPage='home',p
  function exportData(){const blob=new Blob([JSON.stringify({preferences:p,tasks,alarms,members,notes,people,conversations:backendValue('zyra.conversations',[])},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='zyra-local-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
  if(page==='permissions')return <PermissionsSetup initial={p.capabilities} onBack={()=>navigate('security')} onContinue={capabilities=>{update({capabilities});navigate('security');}}/>;
  return <main className={'figma-app '+(p.theme==='Light'?'fg-light':'')+(reduced?' fg-reduced':'')}>
-  <aside className="fg-sidebar"><button className="fg-brand" onClick={()=>navigate('home')}>J Y R A</button><small className="fg-brand-caption">PERSONAL COMPANION</small><button className="fg-space" onClick={onStart}>{name}’s space</button>
+  <aside className="fg-sidebar"><button className="fg-brand" onClick={()=>navigate('home')}><BrandLogo/></button><small className="fg-brand-caption">PERSONAL COMPANION</small><button className="fg-space" onClick={onStart}>{name}’s space</button>
    <nav aria-label="Main navigation">{navigation.slice(0,8).map(([id,icon,label,screen])=><button key={id} className={page===id?'active':''} onClick={()=>navigate(id)} title={label}><FigmaIcon name={icon} screen={screen}/><span>{label}</span></button>)}</nav>
    <div className="fg-quiet"><small>YOUR SPACE, YOUR PACE</small><p>Quiet hours<br/>{p.quietStart} — {p.quietEnd}</p></div><div className="fg-sidebar-footer"><button className="fg-mic-state" onClick={()=>navigate('chat')}><FigmaIcon name="mic"/><span>{devices.microphone?'Mic is active':'Mic is paused'}<small>Click to speak</small></span></button><button className="jy-sidebar-mini" aria-pressed={mini} title="Toggle mini companion" onClick={()=>setMini(!mini)}><FigmaIcon name="phone" screen="foundations"/><span>Mini companion</span></button><nav>{navigation.slice(8).map(([id,icon,label,screen])=><button key={id} className={page===id?'active':''} onClick={()=>navigate(id)} title={label}><FigmaIcon name={icon} screen={screen}/><span>{label}</span></button>)}</nav></div>
   </aside>
