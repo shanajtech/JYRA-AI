@@ -80,6 +80,7 @@ export function useWelcomeVoice() {
     }
   }, [stop]);
 
+  useEffect(()=>{window.addEventListener('zyra-stop-all',stop);return()=>window.removeEventListener('zyra-stop-all',stop);},[stop]);
   useEffect(() => () => {
     audio.current?.pause();
     disconnect.current?.();

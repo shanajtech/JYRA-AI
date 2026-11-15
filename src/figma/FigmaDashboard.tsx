@@ -1,3 +1,4 @@
+import CompanionHome,{FloatingCompanion} from './CompanionHome';
 import DeveloperPage from './DeveloperPage';
 import {publicPreview} from '../deployment';
 import {useEffect,useState} from 'react';
@@ -22,7 +23,7 @@ import PlanDialog from './PlanDialog';
 import SmartAlarmDialog from './SmartAlarmDialog';
 import EditMemoryDialog from './EditMemoryDialog';
 import {MemoryRemovedNotice} from './MemoryRemovedPreview';
-import AnimatedAvatar from '../AnimatedAvatar';
+
 import {useDialogFocus} from './useDialogFocus';
 
 
@@ -35,9 +36,10 @@ export default function FigmaDashboard({initialChatDraft='',initialPage='home',p
  const p={...stored,profile:'female' as const};
  const [page,setPage]=useState<Page>(initialPage==='notifications'?'notifications':navigation.some(n=>n[0]===initialPage)?initialPage as Page:'home'),[modal,setModal]=useState(''),[status,setStatus]=useState(''),[sound,setSound]=useState(false),[draft,setDraft]=useState(''),[chatDraft,setChatDraft]=useState(initialChatDraft);
  const [tasks,saveTasks,taskError]=useLocalData<Task[]>('zyra.tasks',[]),[alarms,saveAlarms,alarmError]=useLocalData<Alarm[]>('zyra.alarms',[]),[members,saveMembers]=useLocalData<string[]>('zyra.members',[]),[notes,saveNotes,noteError]=useLocalData<Note[]>('zyra.notes',[]),[people,savePeople]=useLocalData<Person[]>('zyra.people',[]);
+ const [mini,setMini]=useState(false);
  const [memoryRemoved,setMemoryRemoved]=useState(false);
  const [selectedNote,setSelectedNote]=useState<string|null>(null),[memoryTab,setMemoryTab]=useState('Personal memory'),[editing,setEditing]=useState<Note|null>(null),[reduced,setReduced]=useState(()=>localStorage.getItem('zyra.reducedMotion')==='true');
- const devices=useDevices(),name=p.nickname||p.name||'friend',entry=navigation.find(n=>n[0]===page),today=tasks.filter(t=>t.date===localDate()),next=today.filter(t=>!t.done).sort((a,b)=>a.time.localeCompare(b.time))[0],alarm=alarms.find(a=>a.enabled&&(!a.once||new Date(a.startDate+'T'+a.time).getTime()>Date.now()))||alarms.find(a=>!a.once),note=notes.find(n=>n.id===selectedNote)||notes[0];
+ const devices=useDevices(),name=p.nickname||p.name||'friend',entry=navigation.find(n=>n[0]===page),alarm=alarms.find(a=>a.enabled&&(!a.once||new Date(a.startDate+'T'+a.time).getTime()>Date.now()))||alarms.find(a=>!a.once),note=notes.find(n=>n.id===selectedNote)||notes[0];
  useEffect(()=>{document.title='JYRA — '+(page==='notifications'?'Notifications':entry?.[2]||'Messages');},[page]);
  function navigate(nextPage:Page){setPage(nextPage);setStatus('');setModal('');window.scrollTo(0,0);}
  function update(patch:Partial<Preferences>){onPreferences({...p,...patch,profile:'female'});}
@@ -51,13 +53,13 @@ export default function FigmaDashboard({initialChatDraft='',initialPage='home',p
  return <main className={'figma-app '+(p.theme==='Light'?'fg-light':'')+(reduced?' fg-reduced':'')}>
   <aside className="fg-sidebar"><button className="fg-brand" onClick={()=>navigate('home')}>J Y R A</button><small className="fg-brand-caption">PERSONAL COMPANION</small><button className="fg-space" onClick={onStart}>{name}’s space</button>
    <nav aria-label="Main navigation">{navigation.slice(0,8).map(([id,icon,label,screen])=><button key={id} className={page===id?'active':''} onClick={()=>navigate(id)} title={label}><FigmaIcon name={icon} screen={screen}/><span>{label}</span></button>)}</nav>
-   <div className="fg-quiet"><small>YOUR SPACE, YOUR PACE</small><p>Quiet hours<br/>{p.quietStart} — {p.quietEnd}</p></div><div className="fg-sidebar-footer"><button className="fg-mic-state" onClick={()=>navigate('chat')}><FigmaIcon name="mic"/><span>{devices.microphone?'Mic is active':'Mic is paused'}<small>Click to speak</small></span></button><nav>{navigation.slice(8).map(([id,icon,label,screen])=><button key={id} className={page===id?'active':''} onClick={()=>navigate(id)} title={label}><FigmaIcon name={icon} screen={screen}/><span>{label}</span></button>)}</nav></div>
+   <div className="fg-quiet"><small>YOUR SPACE, YOUR PACE</small><p>Quiet hours<br/>{p.quietStart} — {p.quietEnd}</p></div><div className="fg-sidebar-footer"><button className="fg-mic-state" onClick={()=>navigate('chat')}><FigmaIcon name="mic"/><span>{devices.microphone?'Mic is active':'Mic is paused'}<small>Click to speak</small></span></button><button className="jy-sidebar-mini" aria-pressed={mini} title="Toggle mini companion" onClick={()=>setMini(!mini)}><FigmaIcon name="phone" screen="foundations"/><span>Mini companion</span></button><nav>{navigation.slice(8).map(([id,icon,label,screen])=><button key={id} className={page===id?'active':''} onClick={()=>navigate(id)} title={label}><FigmaIcon name={icon} screen={screen}/><span>{label}</span></button>)}</nav></div>
   </aside>
-  <section className="fg-main"><header className="fg-topbar"><span>{page==='notifications'?'Notifications':page==='mobile'?'Connected devices':page==='security'?'Security & permissions':entry?.[2]||'Messages'}</span><div><small>{publicPreview?'WEBSITE PREVIEW':'PERSONAL'}</small><button className="fg-header-square" aria-label="Notifications" onClick={()=>navigate('notifications')}><FigmaIcon name="bell"/></button><button className="fg-language" onClick={()=>navigate('appearance')}><FigmaIcon name="globe"/>{p.language}</button></div></header>
+  {mini&&<FloatingCompanion onClose={()=>setMini(false)} onOpen={()=>navigate('chat')}/>}<section className="fg-main"><header className="fg-topbar"><span>{page==='notifications'?'Notifications':page==='mobile'?'Connected devices':page==='security'?'Security & permissions':entry?.[2]||'Messages'}</span><div><small>{publicPreview?'WEBSITE PREVIEW':'PERSONAL'}</small><button className="fg-header-square" aria-label="Notifications" onClick={()=>navigate('notifications')}><FigmaIcon name="bell"/></button><button className="fg-language" onClick={()=>navigate('appearance')}><FigmaIcon name="globe"/>{p.language}</button></div></header>
    <div className="fg-content">
     {page!=='chat'&&page!=='developer'&&<div className="fg-page-heading"><div><h1>{page==='home'?`Good ${new Date().getHours()<12?'morning':new Date().getHours()<17?'afternoon':'evening'}, ${name}.`:screenHeadings[page]?.[0]}</h1><p>{page==='home'?'A little clarity for the day ahead.':screenHeadings[page]?.[1]}</p></div>{page==='family'&&<button className="fg-primary" onClick={()=>setModal('task')}>Add a family task</button>}</div>}
     {(status||taskError||alarmError||noteError)&&<div className="fg-feedback" role="status">{status||taskError||alarmError||noteError}</div>}
-    {page==='home'&&<><div className="fg-companion-grid"><Card className="fg-companion-stage"><div className="fg-stage-caption"><small>YOUR COMPANION</small><span>Ready when you are</span></div><div className="fg-stage-portrait"><AnimatedAvatar profile="female" speaking={false} level={{current:0}}/></div><h2>“What would make today feel easier?”</h2></Card><div className="fg-ahead-stack"><Card className="fg-ahead"><small>A LITTLE AHEAD</small><h2>{next?next.title:'A little room for your day.'}</h2><p>{next?`${next.time||'Today'} · ${next.member}`:'Keep your plans close, one thing at a time.'}</p><button className="fg-primary" onClick={()=>setModal('task')}>{next?'Review my plan':'Plan my day'}</button></Card><Card className="fg-agenda"><h2>Today, at a glance</h2>{today.length?today.slice(0,3).map(t=><button key={t.id} className="fg-agenda-row" onClick={()=>setModal('tasks')}><time>{t.time||'Today'}</time><span>{t.title}<small>{t.member}</small></span></button>):<p className="fg-empty">Nothing planned yet. A little space for you.</p>}</Card><Card className="fg-memory-suggestion"><FigmaIcon name="memory"/><div><h3>{notes[0]?.title||'A calmer start'}</h3><p>{notes[0]?.body||'Keep your preferences close. Save what matters in Memory.'}</p></div></Card></div></div><form className="fg-home-composer" onSubmit={e=>{e.preventDefault();openChat();}}><button type="button" aria-label="New task" onClick={()=>setModal('task')}><FigmaIcon name="plus"/></button><label><input aria-label="Ask JYRA" placeholder="Ask JYRA anything, or tap the mic to speak…" value={draft} onChange={e=>setDraft(e.target.value)}/><small>Personal conversation · Nothing shared with family</small></label><button className="fg-round" type="button" aria-label="Open voice conversation" onClick={()=>navigate('chat')}><FigmaIcon name="mic"/></button><button className="fg-send" aria-label="Open conversation"><FigmaIcon name="arrow"/></button></form></>}
+    {page==='home'&&<CompanionHome p={p} tasks={tasks} alarms={alarms} notes={notes} peopleCount={people.length} draft={draft} onDraft={setDraft} onChat={openChat} onOpen={dest=>navigate(dest)} onMini={()=>setMini(true)} onTask={()=>setModal('task')}/>}
     {page==='developer'&&<DeveloperPage/>}{page==='chat'&&<ChatPanel p={p} initialDraft={chatDraft} onReviewPermissions={()=>navigate('security')}/>}
     {page==='tasks'&&<ComputerPanel onHome={()=>navigate('home')}/>}
     {page==='notifications'&&<NotificationsPage tasks={tasks} quietStart={p.quietStart} quietEnd={p.quietEnd} onNavigate={dest=>navigate(dest as Page)}/>}
@@ -91,6 +93,7 @@ export default function FigmaDashboard({initialChatDraft='',initialPage='home',p
  </main>;
 }
 function VoicePreview(){const [audio,setAudio]=useState<HTMLAudioElement|null>(null);useEffect(()=>()=>audio?.pause(),[audio]);return <><h2>A familiar voice.</h2><p>JYRA · Calm & clear · English</p><button className="fg-primary" onClick={()=>{audio?.pause();const next=new Audio('/voice/female-login-en.mp3');setAudio(next);void next.play();}}>Preview voice</button><button className="fg-secondary" onClick={()=>audio?.pause()}>Stop</button></>}
+
 
 
 

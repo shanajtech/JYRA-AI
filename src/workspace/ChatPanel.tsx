@@ -1,3 +1,4 @@
+import {companionPhase} from './companionState';
 import {developerAnswer} from '../identity';
 import {publicPreview} from '../deployment';
 import {useEffect,useRef,useState} from 'react';
@@ -23,6 +24,8 @@ export default function ChatPanel({p,initialDraft='',onReviewPermissions}:{p:Pre
  const controller=useRef<AbortController|null>(null),log=useRef<HTMLDivElement>(null),voice=useWelcomeVoice(),voiceRun=useRef(0);
  const recorder=useRecorder(text=>setDraft(old=>(old?old+' ':'')+text),p.language);
  const [recovery,setRecovery]=useState(false);
+ useEffect(()=>{companionPhase(recorder.recording?'Listening':recorder.processing?'Transcribing':busy?'Thinking':voice.speaking?'Speaking':'Ready');},[recorder.recording,recorder.processing,busy,voice.speaking]);
+ useEffect(()=>{const pause=()=>{voiceRun.current++;voice.stop();controller.current?.abort();};window.addEventListener('zyra-stop-all',pause);return()=>{window.removeEventListener('zyra-stop-all',pause);companionPhase('Ready');};},[]);
 
  useEffect(()=>{if(initialDraft)setDraft(initialDraft);},[initialDraft]);
  useEffect(()=>{let alive=true;void request<{ready:boolean;message:string}>('/ai/status').then(r=>{if(alive)setStatus(r.message);}).catch(()=>{if(alive)setStatus('Local backend unavailable');});return()=>{alive=false;voiceRun.current++;controller.current?.abort();};},[]);

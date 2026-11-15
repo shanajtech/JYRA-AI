@@ -13,7 +13,7 @@ export function useRecorder(onText:(text:string)=>void,language:string){
  const [blocked,setBlocked]=useState(false);
  const acquiring=useRef(false);
  const cleanup=useRef<null|(()=>void)>(null),abort=useRef<AbortController|null>(null),generation=useRef(0);
- useEffect(()=>()=>{generation.current++;cleanup.current?.();abort.current?.abort();},[]);
+ useEffect(()=>{const cancel=()=>{generation.current++;cleanup.current?.();abort.current?.abort();acquiring.current=false;setRecording(false);setProcessing(false);setStarting(false);};window.addEventListener('zyra-stop-all',cancel);return()=>{window.removeEventListener('zyra-stop-all',cancel);generation.current++;cleanup.current?.();abort.current?.abort();};},[]);
  async function start(){
   if(recording||processing||acquiring.current)return;acquiring.current=true;setStarting(true);setError('');setBlocked(false);const epoch=++generation.current;let acquired:MediaStream|null=null;
   try{
