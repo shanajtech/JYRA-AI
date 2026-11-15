@@ -1,5 +1,9 @@
 # JYRA AI
 
+[Live website](https://jyra-ai.vercel.app) · [GitHub repository](https://github.com/shanajtech/JYRA-AI)
+
+The live site is a website/dashboard preview; local AI and account backend are not connected there.
+
 Windows-first React + TypeScript desktop companion prototype with a Tauri v2 scaffold and a local Node.js/SQLite backend.
 
 **Work in progress.** The owner reports that memory recall and Bengali conversation/voice still do not work reliably in their browser. Passing automated tests does not mean those user-facing issues are resolved. See [KNOWN_ISSUES.md](KNOWN_ISSUES.md).
@@ -45,3 +49,4 @@ This is not a production-ready AI assistant. Sample Figma task/briefing screens 
 `vercel.json` builds the Vite frontend with `VITE_PUBLIC_PREVIEW=true`. The production website explicitly labels itself as a preview. Companion entry can open the browser-only dashboard; local AI, SQLite accounts, online speech service and cloud synchronization are not deployed by this configuration. Browser edits are not a cloud account or a backend connection. Local Windows development keeps its existing backend behavior.
 
 Deploy with `npx vercel --prod` after signing in. `.vercelignore` excludes credentials, personal data, local runtimes and dependencies from the upload.
+
