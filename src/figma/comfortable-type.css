@@ -26,3 +26,5 @@
  .figma-app .fg-page-heading h1,.figma-app .fg-conversation>h1{font-size:23px;line-height:31px}
  .figma-app .fg-conversation .fg-voice-panel{display:none}
 }
+
+.fg-website .fg-deployment-note{width:calc(100% - 48px);max-width:1280px;margin:12px auto 0;color:var(--fg-muted);font-size:12px;line-height:18px;padding:10px 14px;background:var(--fg-surface);border-radius:8px}

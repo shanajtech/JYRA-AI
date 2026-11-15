@@ -1,3 +1,4 @@
+import {publicPreview} from './deployment';
 import RecoveryCode from './RecoveryCode';
 import {useEffect,useRef,useState} from 'react';
 import AnimatedAvatar from './AnimatedAvatar';
@@ -96,8 +97,8 @@ export default function App(){
    setScreen(saved.name?'dashboard':'setup');
   }catch(error){setNotice((error as Error).message||'Could not reach the local backend.');}finally{setBusy(false);}
  }
- async function enterDemo(){if(busy)return;setBusy(true);stop();try{await startDemo();const saved=backendValue<Preferences>('zyra.preferences',defaults);setScreen(saved.name?'dashboard':'setup');}catch{setNotice('Start the local backend, then try again.');}finally{setBusy(false);}}
- async function exitAccount(){try{await signOut();setScreen('start');}catch{setNotice('Could not sign out. Please retry when the local backend is available.');}}
+ async function enterDemo(){if(publicPreview){setScreen('dashboard');return;}if(busy)return;setBusy(true);stop();try{await startDemo();const saved=backendValue<Preferences>('zyra.preferences',defaults);setScreen(saved.name?'dashboard':'setup');}catch{setNotice('Start the local backend, then try again.');}finally{setBusy(false);}}
+ async function exitAccount(){if(publicPreview){setScreen('start');return;}try{await signOut();setScreen('start');}catch{setNotice('Could not sign out. Please retry when the local backend is available.');}}
  function change(m:Mode){setMode(m);setPasswordLength(0);setNotice('');setShow(false);stop();}
  function openAuth(next:Mode){change(next);setScreen('auth');}
  function openStart(){stop();setNotice('');setScreen('start');}

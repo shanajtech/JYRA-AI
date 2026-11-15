@@ -1,0 +1,9 @@
+.vercel
+.git
+data
+runtime
+node_modules
+.env
+.env.*
+!.env.example
+src-tauri

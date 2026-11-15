@@ -39,3 +39,9 @@ Copy `.env.example` to `.env` only if required. Keep credentials on your own PC.
 ## Limitations
 
 This is not a production-ready AI assistant. Sample Figma task/briefing screens do not execute real computer automation. Separate family-account sharing, background phone push delivery and production deployment remain unfinished. A support request saved locally is not an email delivery receipt.
+
+## Vercel website preview
+
+`vercel.json` builds the Vite frontend with `VITE_PUBLIC_PREVIEW=true`. The production website explicitly labels itself as a preview. Companion entry can open the browser-only dashboard; local AI, SQLite accounts, online speech service and cloud synchronization are not deployed by this configuration. Browser edits are not a cloud account or a backend connection. Local Windows development keeps its existing backend behavior.
+
+Deploy with `npx vercel --prod` after signing in. `.vercelignore` excludes credentials, personal data, local runtimes and dependencies from the upload.

@@ -1,3 +1,4 @@
+import {publicPreview,previewMessage} from './deployment.ts';
 import {useSyncExternalStore} from 'react';
 export interface LocalUser{id:string;name:string;email:string|null;demo:boolean}
 interface Snapshot{status:'starting'|'online'|'offline';user:LocalUser|null;pending:number;error:string;revision:number}
@@ -12,6 +13,7 @@ const notify=()=>listeners.forEach(listener=>listener());
 function patch(change:Partial<Snapshot>){snapshot={...snapshot,...change};notify();}
 export function useBackend(){return useSyncExternalStore(listener=>{listeners.add(listener);return()=>listeners.delete(listener);},()=>snapshot);}
 export async function request<T>(path:string,method='GET',body?:unknown,signal?:AbortSignal):Promise<T>{
+ if(publicPreview)throw new Error(previewMessage);
  const response=await fetch('/api'+path,{method,credentials:'same-origin',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:signal||AbortSignal.timeout(15000)});
  const result=await response.json().catch(()=>({error:'Local backend is unavailable.'}));
  if(!response.ok)throw new Error(result.error||'Local request failed.');
@@ -23,6 +25,7 @@ async function activate(user:LocalUser|null){
  patch({status:'online',user,pending:0,error:'',revision:snapshot.revision+1});
 }
 export function initializeBackend(){
+ if(publicPreview){patch({status:'offline',user:null,error:''});return Promise.resolve();}
  if(!initialization)initialization=(async()=>{try{const result=await request<{user:LocalUser|null}>('/session');await activate(result.user);}catch{patch({status:'offline',user:null,error:''});}})();
  return initialization;
 }
@@ -65,6 +68,7 @@ export async function signOut(){await flushSaves();try{await request('/auth/logo
 export function currentBackend(){return snapshot;}
 
 export async function streamChat(body:unknown,signal:AbortSignal,onText:(text:string)=>void):Promise<{answer:string}>{
+ if(publicPreview)throw new Error(previewMessage);
  const response=await fetch('/api/chat/stream',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal});
  if(!response.ok){const data=await response.json();throw new Error(data.error||'Chat unavailable.');}
  if(!response.body)throw new Error('Chat response is missing.');
@@ -72,3 +76,4 @@ export async function streamChat(body:unknown,signal:AbortSignal,onText:(text:st
  try{while(true){const {value,done}=await reader.read();pending+=decoder.decode(value||new Uint8Array(),{stream:!done});let at;while((at=pending.indexOf('\n'))>=0){const line=pending.slice(0,at);pending=pending.slice(at+1);if(!line.trim())continue;const data=JSON.parse(line);if(data.error)throw new Error(data.error);if(typeof data.text==='string')onText(data.text);if(data.done){answer=data.answer;complete=true;}}if(done)break;}}finally{reader.releaseLock();}
  if(!complete)throw new Error('The reply was interrupted. Please try again.');return {answer};
 }
+
