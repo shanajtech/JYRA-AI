@@ -1,4 +1,4 @@
-import {developerAnswer} from '../src/identity.ts';
+import {developerAnswer} from '../src/identity.mjs';
 import {HttpError} from './validation.mjs';
 
 // The model can only generate text. It receives no filesystem or execution tools.
