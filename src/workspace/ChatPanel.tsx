@@ -1,3 +1,5 @@
+import {developerAnswer} from '../identity';
+import {publicPreview} from '../deployment';
 import {useEffect,useRef,useState} from 'react';
 import {currentBackend,flushSaves,request,streamChat} from '../backend';
 
@@ -32,9 +34,9 @@ export default function ChatPanel({p,initialDraft='',onReviewPermissions}:{p:Pre
   if(busy||recorder.recording||!draft.trim())return;mute();
   const next:Message[]=[...messages,{role:'user',content:draft.trim()}];setMessages(next);setDraft('');setError('');setBusy(true);
   const c=new AbortController();controller.current=c;
-  try{await flushSaves();const r=await streamChat({messages:next.slice(-12)},AbortSignal.any([c.signal,AbortSignal.timeout(125000)]),text=>setMessages([...next,{role:'assistant',content:text}]));const complete:Message[]=[...next,{role:'assistant',content:r.answer.slice(0,4000)}];setMessages(complete);setStatus('Local AI · replies stay on this computer');
+  try{await flushSaves();const identity=developerAnswer(next[next.length-1].content,p.language);const r=identity?{answer:identity}:await streamChat({messages:next.slice(-12)},AbortSignal.any([c.signal,AbortSignal.timeout(125000)]),text=>setMessages([...next,{role:'assistant',content:text}]));const complete:Message[]=[...next,{role:'assistant',content:r.answer.slice(0,4000)}];setMessages(complete);setStatus('Local AI · replies stay on this computer');
    if(!p.privateSession){const id=active||uid();setActive(id);saveHistory([{id,title:complete[0].content.slice(0,80),updatedAt:Date.now(),messages:complete.slice(-24)},...history.filter(h=>h.id!==id)].slice(0,50));}
-   if(spoken)void read(r.answer);
+   if(spoken){if(identity)void voice.play(p.language==='বাংলা'?'developer-bn':'developer-en',p.profile);else if(!publicPreview)void read(r.answer);}
   }catch(e){if(!c.signal.aborted)setError((e as Error).message);}
   finally{setBusy(false);controller.current=null;}
  }
@@ -50,6 +52,7 @@ export default function ChatPanel({p,initialDraft='',onReviewPermissions}:{p:Pre
   <form className="fg-home-composer" onSubmit={e=>{e.preventDefault();void send();}}><button type="button" aria-label="New conversation" disabled={busy||recorder.recording} onClick={()=>{mute();setActive(null);setMessages([]);setDraft('');setMemoryStatus('');}}><FigmaIcon name="plus" screen="4:11"/></button><label><input value={draft} onChange={e=>setDraft(e.target.value)} placeholder="Tell JYRA what you’d like to do next…" aria-label="Message companion" maxLength={2000} disabled={busy||recorder.recording||recorder.processing}/><small>Personal conversation · Nothing shared with family</small></label><button type="button" className="fg-round" aria-label={recorder.recording?'Stop recording':'Record a voice message'} disabled={busy||recorder.processing||recorder.starting} onClick={()=>{mute();if(recorder.recording)recorder.stop();else void recorder.start();}}><FigmaIcon name="mic" screen="4:11"/></button>{busy?<button type="button" className="fg-send" onClick={()=>controller.current?.abort()}>Stop</button>:<button className="fg-send" aria-label="Send message" disabled={!draft.trim()||recorder.recording||recorder.processing}><FigmaIcon name="arrow" screen="4:11"/></button>}</form>
  </div>;
 }
+
 
 
 

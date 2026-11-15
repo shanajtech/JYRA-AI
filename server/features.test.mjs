@@ -80,3 +80,10 @@ test('Banglish personal name is recalled across chats only after explicit memory
  assert.match((await ask('amar nam ki',{savedNotes:[{body:'amar nam shanaj'}]})).answer,/shanaj/);
  assert.doesNotMatch((await ask('amar nam ki',{privateSession:true,savedNotes:[{body:'amar nam shanaj'}]})).answer,/shanaj/);
 });
+
+test('developer identity answers English, Bangla and Banglish without inventing a foundation model',async()=>{
+ const ai=createAI({fetcher:()=>{throw Error('Identity should not need a model');}});
+ for(const [text,language] of [['Who is your developer?','English'],['Who created you?','English'],['তোমার ডিজাইনার কে?','বাংলা'],['tomar developer ke','Auto']]){
+  const result=await ai.chat({id:'identity'},{messages:[{role:'user',content:text}]},{language});assert.match(result.answer,/Shanaj Akter/);assert.match(result.answer,/JYRA/);assert.doesNotMatch(result.answer,/trained|foundation model|নতুন মডেল/);
+ }
+});

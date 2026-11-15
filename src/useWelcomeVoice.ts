@@ -28,7 +28,7 @@ export function useWelcomeVoice() {
     setVoiceError('');
     const run = sequence.current;
     const clip = mode === 'password' ? 'password' : mode === 'signup' ? 'signup' : 'login';
-    const player = new Audio(/^data:audio\/(wav|mpeg);base64,/.test(mode) ? mode : mode === 'website' ? '/voice/website-welcome-en.wav?v=jyra-ipa-2' : profile === 'female' ? `/voice/jyra-${clip}-en.wav?v=jyra-ipa-2` : `/voice/${profile}-${clip}-en.mp3`);
+    const player = new Audio(/^data:audio\/(wav|mpeg);base64,/.test(mode) ? mode : mode === 'developer-en' ? '/voice/developer-en.wav' : mode === 'developer-bn' ? '/voice/developer-bn.mp3' : mode === 'website' ? '/voice/website-welcome-en.wav?v=jyra-ipa-2' : profile === 'female' ? `/voice/jyra-${clip}-en.wav?v=jyra-ipa-2` : `/voice/${profile}-${clip}-en.mp3`);
     audio.current = player;
     let analyser: AnalyserNode | null = null;
     let source: MediaElementAudioSourceNode | null = null;
