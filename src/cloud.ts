@@ -1,11 +1,11 @@
 import {useSyncExternalStore} from 'react';
-let key='';
-const listeners=new Set<()=>void>();
-export function cloudKey(){return key;}
-export function disconnectCloud(){key='';listeners.forEach(f=>f());window.dispatchEvent(new Event('zyra-stop-all'));}
-export function useCloudConnection(){return useSyncExternalStore(f=>{listeners.add(f);return()=>listeners.delete(f);},()=>!!key);}
-export async function connectCloud(value:string){
- const candidate=value.trim();if(!/^gsk_[A-Za-z0-9_-]{20,200}$/.test(candidate))throw new Error('Enter a valid Groq API key.');
- const response=await fetch('/api/cloud/chat',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${candidate}`},body:JSON.stringify({action:'verify'}),signal:AbortSignal.timeout(15000)});
- const data=await response.json().catch(()=>({error:'The online connection service is unavailable.'}));if(!response.ok||!data.ready)throw new Error(data.error||'Could not connect.');key=candidate;listeners.forEach(f=>f());
-}
+type Status={ready:boolean;connected:boolean;checking:boolean;dailyLimit:number;remaining:number|null;message:string};
+let snapshot:Status={ready:false,connected:false,checking:false,dailyLimit:20,remaining:null,message:'Checking online AI…'};
+const listeners=new Set<()=>void>();let checking:Promise<void>|null=null;
+const patch=(value:Partial<Status>)=>{snapshot={...snapshot,...value};listeners.forEach(f=>f());};
+export function useCloudStatus(){return useSyncExternalStore(f=>{listeners.add(f);return()=>listeners.delete(f);},()=>snapshot);}
+export function useCloudConnection(){return useCloudStatus().connected;}
+export function updateCloudRemaining(value:number){if(Number.isSafeInteger(value)&&value>=0)patch({remaining:value});}
+export async function checkCloud(){if(checking)return checking;checking=(async()=>{patch({checking:true});try{const response=await fetch('/api/cloud/chat',{credentials:'same-origin',signal:AbortSignal.timeout(12000)});const data=await response.json();if(!response.ok)throw new Error('Could not check the online service.');patch({ready:!!data.ready,dailyLimit:data.dailyLimit||20,message:data.message,connected:data.ready?snapshot.connected:false});}catch{patch({ready:false,connected:false,message:'The online service could not be reached. Please try again.'});}finally{patch({checking:false});checking=null;}})();return checking;}
+export async function connectCloud(){const response=await fetch('/api/cloud/chat',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verify'}),signal:AbortSignal.timeout(15000)});const data=await response.json().catch(()=>({error:'The online connection service is unavailable.'}));if(!response.ok||!data.ready)throw new Error(data.error||'Could not connect.');patch({ready:true,connected:true,dailyLimit:data.dailyLimit||20,message:'Online text chat connected.'});}
+export async function disconnectCloud(){patch({connected:false});window.dispatchEvent(new Event('zyra-stop-all'));try{await fetch('/api/cloud/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'disconnect'}),signal:AbortSignal.timeout(5000)});}catch{/* Local consent remains off even if the network is unavailable. */}}

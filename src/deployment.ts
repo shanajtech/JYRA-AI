@@ -1,3 +1,3 @@
 export const publicPreview=import.meta.env?.VITE_PUBLIC_PREVIEW==='true';
-export const previewMessage='Website preview: connect your own Groq free-plan key in Conversation for online text chat. Memory stays in this browser. Cloud accounts, voice and device sync are not connected.';
+export const previewMessage='Website preview: JYRA manages the online AI connection; users do not need API keys. Service availability depends on server setup. Memory stays in this browser unless cloud backup is enabled.';
 

@@ -1,5 +1,5 @@
 import {browserReminderPath,browserReminderRequest} from './services/browserReminderBridge.ts';
-import {cloudKey} from './cloud.ts';
+import {updateCloudRemaining} from './cloud.ts';
 import {publicPreview,previewMessage} from './deployment.ts';
 import {useSyncExternalStore} from 'react';
 export interface LocalUser{id:string;name:string;email:string|null;demo:boolean}
@@ -15,7 +15,13 @@ const notify=()=>listeners.forEach(listener=>listener());
 function patch(change:Partial<Snapshot>){snapshot={...snapshot,...change};notify();}
 export function useBackend(){return useSyncExternalStore(listener=>{listeners.add(listener);return()=>listeners.delete(listener);},()=>snapshot);}
 export async function request<T>(path:string,method='GET',body?:unknown,signal?:AbortSignal):Promise<T>{
- if(publicPreview){if(browserReminderPath(path))return await browserReminderRequest(path,method,body) as T;throw new Error(previewMessage);}
+ if(publicPreview){
+  if(browserReminderPath(path))return await browserReminderRequest(path,method,body) as T;
+  const mapped=path==='/speech/transcribe'?'/api/cloud/transcribe':path==='/support'?'/api/cloud/support':path==='/ai/status'?'/api/cloud/chat':null;
+  if(mapped){const response=await fetch(mapped,{method,credentials:'same-origin',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:signal||AbortSignal.timeout(15000)});const data=await response.json().catch(()=>({error:'The online service is unavailable.'}));if(!response.ok)throw new Error(data.error||'Online request failed.');return data as T;}
+  throw new Error(previewMessage);
+ }
+
  const response=await fetch('/api'+path,{method,credentials:'same-origin',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:signal||AbortSignal.timeout(15000)});
  const result=await response.json().catch(()=>({error:'Local backend is unavailable.'}));
  if(!response.ok)throw new Error(result.error||'Local request failed.');
@@ -70,9 +76,10 @@ export async function signOut(){await flushSaves();try{await request('/auth/logo
 export function currentBackend(){return snapshot;}
 
 export async function streamChat(body:unknown,signal:AbortSignal,onText:(text:string)=>void,context?:{language:string;privateSession:boolean;savedNotes:unknown[]}):Promise<{answer:string}>{
- const key=publicPreview?cloudKey():'';if(publicPreview&&!key)throw new Error('Connect online AI before sending a message.');
- const response=await fetch(publicPreview?'/api/cloud/chat':'/api/chat/stream',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',...(publicPreview?{Authorization:`Bearer ${key}`}:{})},body:JSON.stringify(publicPreview?{...(body as object),...context,action:'chat'}:body),signal});
+
+ const response=await fetch(publicPreview?'/api/cloud/chat':'/api/chat/stream',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(publicPreview?{...(body as object),...context,action:'chat'}:body),signal});
  if(!response.ok){const data=await response.json();throw new Error(data.error||'Chat unavailable.');}
+ if(publicPreview&&response.headers.has('X-JYRA-Remaining'))updateCloudRemaining(Number(response.headers.get('X-JYRA-Remaining')));
  if(!response.body)throw new Error('Chat response is missing.');
  const reader=response.body.getReader(),decoder=new TextDecoder();let pending='',answer='',complete=false;
  try{while(true){const {value,done}=await reader.read();pending+=decoder.decode(value||new Uint8Array(),{stream:!done});let at;while((at=pending.indexOf('\n'))>=0){const line=pending.slice(0,at);pending=pending.slice(at+1);if(!line.trim())continue;const data=JSON.parse(line);if(data.error)throw new Error(data.error);if(typeof data.text==='string')onText(data.text);if(data.done){answer=data.answer;complete=true;}}if(done)break;}}finally{reader.releaseLock();}

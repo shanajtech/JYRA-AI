@@ -26,3 +26,10 @@ The repository is a snapshot for further development, not a finished release.
 - Added open-browser alarm/reminder execution with durable browser run history, stop, snooze, repeat caps and quiet hours. This is not closed-browser/background phone delivery.
 - Added memory-only JSON export and reviewed, non-replacing restore. A controlled browser test verified an imported test note remained after reload on an isolated localhost test origin.
 - No external AI key, cloud database credentials, SMTP sender or new vendor account was provisioned. Real Groq responses/Bengali quality, cloud account sync, online voice and general PC control remain pending.
+
+## Shared-service backend preparation (2026-11-15)
+
+- Public key-entry UI has been replaced with owner-managed shared AI, signed HttpOnly sessions and durable Redis usage limits. No required production environment variables were present at the audit; real inference remains blocked until the owner sets them.
+- Encrypted manual cloud backup/transfer, short online dictation and configured support SMTP endpoints have been implemented with controlled tests. Real Redis/Groq/SMTP connectivity and Bengali quality are not established by those tests.
+- Cloud backup is optional/manual with a 30-day browser session and 90-day storage retention. It is not a permanent cloud account or automatic sync; retain local/downloaded copies.
+- Spoken cloud replies, permanent cloud login, separate family accounts, general PC automation, phone calls/Messenger actions, background phone push and a verified release installer remain incomplete. They must not be advertised as complete.

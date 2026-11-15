@@ -10,13 +10,14 @@
     "tauri": "tauri",
     "backend": "node --env-file-if-exists=.env server/server.mjs",
     "dev:all": "node --env-file-if-exists=.env scripts/dev.mjs",
-    "test:backend": "node --test server/server.test.mjs server/client.test.mjs server/features.test.mjs server/integrations.test.mjs server/gateway.test.mjs server/desktop.test.mjs server/reminders.test.mjs server/permissions.test.mjs server/personal-reminders.test.mjs server/support.test.mjs server/cloud.test.mjs server/browser-services.test.mjs",
+    "test:backend": "node --test server/server.test.mjs server/client.test.mjs server/features.test.mjs server/integrations.test.mjs server/gateway.test.mjs server/desktop.test.mjs server/reminders.test.mjs server/permissions.test.mjs server/personal-reminders.test.mjs server/support.test.mjs server/cloud.test.mjs server/browser-services.test.mjs server/shared-cloud.test.mjs",
     "setup:ai": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-ai.ps1",
     "test:offline": "node --test server/offline.test.mjs",
     "setup:speech": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-speech.ps1",
     "check:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-windows.ps1",
     "setup:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-windows.ps1",
-    "build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1"
+    "build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1",
+    "setup:cloud": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/configure-cloud.ps1"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

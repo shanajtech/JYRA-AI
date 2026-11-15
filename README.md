@@ -2,7 +2,7 @@
 
 [Live website](https://jyra-ai.vercel.app) · [GitHub repository](https://github.com/shanajtech/JYRA-AI)
 
-The live site is a website/dashboard preview; local AI and account backend are not connected there.
+The live site is a website/dashboard preview with deployable shared-cloud services. Online features stay unavailable until the owner supplies server credentials. End users do not enter AI keys.
 
 Windows-first React + TypeScript desktop companion prototype with a Tauri v2 scaffold and a local Node.js/SQLite backend.
 
@@ -44,23 +44,37 @@ Copy `.env.example` to `.env` only if required. Keep credentials on your own PC.
 
 This is not a production-ready AI assistant. Sample Figma task/briefing screens do not execute real computer automation. Separate family-account sharing, background phone push delivery and production deployment remain unfinished. A support request saved locally is not an email delivery receipt.
 
-## Vercel website preview
+## Shared cloud backend on Vercel
 
-`vercel.json` builds the Vite frontend with `VITE_PUBLIC_PREVIEW=true`. The production website explicitly labels itself as a preview. Companion entry can open the browser-only dashboard; local AI, SQLite accounts, online speech service and cloud synchronization are not deployed by this configuration. Online text chat now has a separate Groq connection; see below. Browser edits are not a cloud account or a backend connection. Local Windows development keeps its existing backend behavior.
+Vercel builds the web frontend with VITE_PUBLIC_PREVIEW=true and deploys the functions under api/cloud/. Local Windows mode keeps its existing SQLite accounts, local inference and private mobile portal. Cloud users never provide an AI key. The previous BYOK handler is retained only for explicitly enabled private experiments (ZYRA_ALLOW_BYOK=true); the public interface does not expose a key form.
 
-Deploy with `npx vercel --prod` after signing in. `.vercelignore` excludes credentials, personal data, local runtimes and dependencies from the upload.
+Required server-only production settings:
 
-## Online text AI (Groq free-plan connection)
+- GROQ_API_KEY: the owner's Groq key. Keep the intended provider plan and spend limits; this project does not create or upgrade a paid plan.
+- UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN: the owner's persistent Upstash Redis database, including TLS.
+- ZYRA_SESSION_SECRET: at least 43 characters of high-entropy random text. Keep this unchanged: it signs sessions and derives cloud-backup encryption keys. Rotation invalidates sessions and makes old encrypted backups unreadable.
 
-The website now includes a stateless Vercel Function at `/api/cloud/chat`. Open Conversation → Connect online AI, create a key in your own Groq account, and enter it in the masked connection dialog. Do not paste a key into chat. Verify that the Groq account remains on its Free plan; model availability and provider limits may change. No shared paid key or new subscription is provisioned by this project.
+Run npm run setup:cloud from this repository to enter the three provider values using masked prompts. The script sends values to Vercel through stdin, not command-line arguments or files. It generates the signing secret only if one is not already present. Review the provider accounts and their terms yourself. The script provisions no external account/database and creates no subscription.
 
-The key is held only in JavaScript memory until disconnect/reload, sent to JYRA's HTTPS function as a bearer credential, and forwarded only to Groq's official endpoint. It is not stored in localStorage, SQLite or application logs. The function validates origin, payload, roles and memories, rejects redirects, enforces a bounded per-instance limiter, supports cancellation, and returns streamed text. Provider rate limits still apply across all instances. Production protections should be revisited before a general public launch.
+Optional ZYRA_DAILY_LIMIT defaults to 20 chat requests per browser, with network and overall service limits. ZYRA_GLOBAL_DAILY_LIMIT defaults to 200 requests per day. Counters are atomic Redis operations shared across function instances; storage failure blocks shared inference. Limits reset at midnight in Bangladesh. These are application request limits, not a guarantee of zero provider cost. Set provider-side spend limits too.
 
-After explicit consent, the current conversation (up to 12 messages) and saved memory (up to 20 entries) are sent to Groq. Private sessions omit saved memories and do not save new history. Memory/history in this deployment are browser-local, not cloud-synced accounts. Windows local mode retains SQLite storage and local inference. Cloud voice, PC automation and phone pairing are not enabled by the Groq connection.
+For separate experimental app variants, set a distinct ZYRA_APP_ID (lowercase letters, digits and hyphens, at most 32 characters). Each namespace has separate backups and usage counters. Provider-account limits still apply across all variants. These are application variants using existing AI models, not newly trained foundation models.
 
-`npm run test:backend` includes cloud handler tests with a controlled provider fixture. A real Groq key is still needed for a genuine end-to-end provider test; passing fixture tests does not establish Bengali response quality in the owner's account.
-## Browser alarms and memory backup
+### Functions
 
-The public website can execute saved alarms and task reminders while its dashboard stays open and the computer stays awake. This uses browser storage, not a cloud scheduler. Enable alarm sound from Alarms & reminders; otherwise the written alarm remains available. Stop, snooze, repeat caps, selected weekdays and quiet hours are supported. Browser timers may be delayed or suspended in inactive tabs; closed-browser delivery and phone push are not implemented. A short browser lease reduces duplicate delivery across tabs.
+- /api/cloud/chat: availability, protected anonymous session, streamed shared Groq chat, stop/cancellation, server-only credentials and daily/network/global limits. Explicit consent covers current chat and selected memories.
+- /api/cloud/transcribe: optional short microphone recordings sent to Groq Whisper after the user connects and presses Record. Accepts validated mono 16 kHz PCM WAV, at most 20 seconds. English, Bengali or automatic language detection. No persistent audio files are written.
+- /api/cloud/state: optional encrypted manual backup of notes and conversation history, compare-and-swap versions, reviewed restore and one-time device codes expiring after 10 minutes. Backups expire 90 days after upload; sessions expire after 30 days. Keep a downloaded copy and do not treat this as a permanent signed-in cloud account or automatic sync. Photos and service credentials are excluded.
+- /api/cloud/support: validated support text to a fixed configured owner recipient over TLS SMTP. Returns success only if that mail server accepts it; otherwise it reports failure. No fake delivery receipt.
 
-Memory → Download memory backup exports only memory titles and text to a private JSON file. Restore memory backup validates the whole file, previews it, and requires Add memories before saving. It merges without replacing existing notes and skips duplicate text. This provides a manual transfer between devices, not account sync. Keep exported files private. Clearing site data still removes browser-only state unless a backup is kept elsewhere.
+Support additionally requires ZYRA_SUPPORT_TO, ZYRA_SUPPORT_FROM, ZYRA_SUPPORT_SMTP_HOST, ZYRA_SUPPORT_SMTP_USER and ZYRA_SUPPORT_SMTP_PASSWORD. Port may be 465 or 587. These are server-only settings. No email is sent by merely building/deploying the project.
+
+### Browser-only features
+
+Saved alarms and task reminders execute while the dashboard remains open and the computer stays awake. Enable alarm sound to hear chimes. Stop, snooze, repeat caps, weekdays and quiet hours are supported. Browser timers may be delayed or suspended; closed-browser delivery and phone push are not implemented. Memory JSON download/reviewed restore remains available without any cloud account.
+
+### Validation and remaining release work
+
+npm run test:backend includes controlled provider/Redis/SMTP fixtures. These tests establish request handling and security behavior; they do not establish actual provider connectivity or Bengali quality in the owner's account. Configure the server values, then test real chat, dictation, backup transfer and support delivery before release.
+
+Spoken cloud replies, permanent cloud login/registration, separate family accounts, general autonomous PC control, phone calls/Messenger actions, background phone push and a verified production Windows installer remain unfinished. The app must not claim those features are operational. See KNOWN_ISSUES.md.

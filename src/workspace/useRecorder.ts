@@ -30,7 +30,7 @@ export function useRecorder(onText:(text:string)=>void,language:string){
    async function finish(){
     if(!cleanup.current)return;cleanup.current();setRecording(false);if(epoch!==generation.current)return;setProcessing(true);
     try{const all=new Float32Array(size);let offset=0;for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.length;}if(size<context.sampleRate*.1)throw new Error('Record at least a short sentence.');
-     const c=new AbortController();abort.current=c;const r=await request<{text:string}>('/speech/transcribe','POST',{audio:wave(all,context.sampleRate),language:language==='বাংলা'?'bn':'en'},AbortSignal.any([c.signal,AbortSignal.timeout(95000)]));if(epoch===generation.current){if(r.text)onText(r.text);else setError('No speech detected. Try again.');}
+     const c=new AbortController();abort.current=c;const r=await request<{text:string}>('/speech/transcribe','POST',{audio:wave(all,context.sampleRate),language:language==='বাংলা'?'bn':language==='Auto'?'auto':'en'},AbortSignal.any([c.signal,AbortSignal.timeout(95000)]));if(epoch===generation.current){if(r.text)onText(r.text);else setError('No speech detected. Try again.');}
     }catch(e){if(epoch===generation.current)setError((e as Error).message);}finally{if(epoch===generation.current)setProcessing(false);}
    }
    stop.current=finish;
