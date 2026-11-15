@@ -1,3 +1,4 @@
+import {browserReminderPath,browserReminderRequest} from './services/browserReminderBridge.ts';
 import {cloudKey} from './cloud.ts';
 import {publicPreview,previewMessage} from './deployment.ts';
 import {useSyncExternalStore} from 'react';
@@ -14,7 +15,7 @@ const notify=()=>listeners.forEach(listener=>listener());
 function patch(change:Partial<Snapshot>){snapshot={...snapshot,...change};notify();}
 export function useBackend(){return useSyncExternalStore(listener=>{listeners.add(listener);return()=>listeners.delete(listener);},()=>snapshot);}
 export async function request<T>(path:string,method='GET',body?:unknown,signal?:AbortSignal):Promise<T>{
- if(publicPreview)throw new Error(previewMessage);
+ if(publicPreview){if(browserReminderPath(path))return await browserReminderRequest(path,method,body) as T;throw new Error(previewMessage);}
  const response=await fetch('/api'+path,{method,credentials:'same-origin',headers:body===undefined?{}:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:signal||AbortSignal.timeout(15000)});
  const result=await response.json().catch(()=>({error:'Local backend is unavailable.'}));
  if(!response.ok)throw new Error(result.error||'Local request failed.');

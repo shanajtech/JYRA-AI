@@ -59,3 +59,8 @@ The key is held only in JavaScript memory until disconnect/reload, sent to JYRA'
 After explicit consent, the current conversation (up to 12 messages) and saved memory (up to 20 entries) are sent to Groq. Private sessions omit saved memories and do not save new history. Memory/history in this deployment are browser-local, not cloud-synced accounts. Windows local mode retains SQLite storage and local inference. Cloud voice, PC automation and phone pairing are not enabled by the Groq connection.
 
 `npm run test:backend` includes cloud handler tests with a controlled provider fixture. A real Groq key is still needed for a genuine end-to-end provider test; passing fixture tests does not establish Bengali response quality in the owner's account.
+## Browser alarms and memory backup
+
+The public website can execute saved alarms and task reminders while its dashboard stays open and the computer stays awake. This uses browser storage, not a cloud scheduler. Enable alarm sound from Alarms & reminders; otherwise the written alarm remains available. Stop, snooze, repeat caps, selected weekdays and quiet hours are supported. Browser timers may be delayed or suspended in inactive tabs; closed-browser delivery and phone push are not implemented. A short browser lease reduces duplicate delivery across tabs.
+
+Memory → Download memory backup exports only memory titles and text to a private JSON file. Restore memory backup validates the whole file, previews it, and requires Add memories before saving. It merges without replacing existing notes and skips duplicate text. This provides a manual transfer between devices, not account sync. Keep exported files private. Clearing site data still removes browser-only state unless a backup is kept elsewhere.

@@ -21,3 +21,8 @@ The repository is a snapshot for further development, not a finished release.
 - The live website still needs the owner's real key to verify genuine provider replies and Bengali quality. No Groq account, billing plan or API key was created automatically.
 - Cloud memory/history remain in the browser. Cross-device durable accounts, cloud voice and background jobs remain incomplete.
 - Cloud integration tests use a controlled provider fixture. The owner's reported memory/Bengali issues are not marked resolved solely from those tests.
+## Browser service progress (2026-11-15)
+
+- Added open-browser alarm/reminder execution with durable browser run history, stop, snooze, repeat caps and quiet hours. This is not closed-browser/background phone delivery.
+- Added memory-only JSON export and reviewed, non-replacing restore. A controlled browser test verified an imported test note remained after reload on an isolated localhost test origin.
+- No external AI key, cloud database credentials, SMTP sender or new vendor account was provisioned. Real Groq responses/Bengali quality, cloud account sync, online voice and general PC control remain pending.
