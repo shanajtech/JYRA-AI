@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ZYRA AI",
+  "version": "0.1.0",
+  "identifier": "com.zyra.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev:all",
+    "devUrl": "http://127.0.0.1:1430",
+    "beforeBuildCommand": "npm run build && node scripts/prepare-desktop.mjs",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "visible": false,
+        "title": "ZYRA AI",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 600
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "resources": {"resources/": "resources/"},
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

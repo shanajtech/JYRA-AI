@@ -1,0 +1,28 @@
+/* Comfortable laptop sizing without changing browser zoom or the design palette. */
+.figma-app .fg-topbar{font-size:18px}
+.figma-app .fg-page-heading h1,.figma-app .fg-conversation>h1{font-size:28px;line-height:38px}
+.figma-app .fg-page-heading p{font-size:14px;line-height:22px}
+.figma-app .fg-card h2{font-size:21px;line-height:29px}
+.figma-app .fg-message p,.figma-app .fg-assistant-message>p{font-size:16px;line-height:25px}
+.figma-app .fg-user-message p{font-size:15px;line-height:23px}
+.figma-app .fg-assistant-message>small{margin-bottom:12px;font-size:11px}
+.figma-app .fg-user-message{padding:16px 20px}
+.figma-app .fg-home-composer input{font-size:14px}
+.figma-app .fg-conversation .fg-home-composer{margin-top:16px}
+.figma-app .fg-conversation .fg-voice-panel{display:flex;flex-direction:column;overflow:hidden;padding:16px;position:sticky;top:0;align-self:stretch;gap:0}
+.figma-app .fg-conversation .fg-voice-portrait{flex:1;min-height:0;max-height:none;aspect-ratio:auto;width:100%;border-radius:16px}
+.figma-app .fg-conversation .fg-voice-portrait canvas{width:100%;height:100%;object-fit:contain}
+.figma-app .fg-conversation .fg-voice-panel h2{font-size:19px;line-height:26px;margin:14px 0 8px;flex-shrink:0}
+.figma-app .fg-conversation .fg-voice-panel>p{font-size:12px;line-height:18px;margin:0 0 12px;flex-shrink:0}
+.figma-app .fg-conversation .fg-voice-panel>button{flex-shrink:0;min-height:40px;height:40px}
+@media(min-width:761px) and (max-width:1400px){
+ .fg-website h1{font-size:48px;line-height:1.22;letter-spacing:-1px}
+ .fg-website h2{font-size:30px;line-height:1.3}
+ .fg-website h3{font-size:21px;line-height:1.4}
+ .fg-website p{font-size:15px;line-height:1.55}
+ .figma-app .fg-content:has(.fg-companion-grid) .fg-page-heading h1{font-size:28px;line-height:38px}
+}
+@media(max-width:760px){
+ .figma-app .fg-page-heading h1,.figma-app .fg-conversation>h1{font-size:23px;line-height:31px}
+ .figma-app .fg-conversation .fg-voice-panel{display:none}
+}

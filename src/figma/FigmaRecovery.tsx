@@ -1,0 +1,4 @@
+import FigmaIcon from './FigmaIcon';
+export default function FigmaRecovery({onRetry,onReturn}:{onRetry:()=>void;onReturn:()=>void}){
+ return <section className="fg-card fg-recovery"><FigmaIcon name="globe" screen="4:24"/><h1>Let’s reconnect.</h1><p>The connection dropped. Your conversation is still here.</p><p>No new computer actions are running.<br/>I’ll wait for you before trying again.</p><div className="fg-recovery-suggestions"><p>1&nbsp;&nbsp; Check that your internet connection is available.</p><p>2&nbsp;&nbsp; Retry when you’re ready, or return to your companion.</p></div><div className="fg-button-row"><button className="fg-primary" onClick={onRetry}>Try again</button><button className="fg-secondary" onClick={onReturn}>Return to companion</button></div><small>Still having trouble? Open Support from the website.</small></section>;
+}

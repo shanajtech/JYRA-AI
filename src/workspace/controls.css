@@ -1,0 +1,70 @@
+/* Shared control palette, including native Windows dropdown/date popups. */
+:root{color-scheme:dark;--control-bg:#142442;--control-text:#edf2ff;--control-muted:#9aafd2;--control-border:#5876b1;--control-selected:#6430b0;--control-hover:#233762}
+.workspace,.scene{color-scheme:dark}
+.workspace.light-theme{color-scheme:light;--control-bg:#f8f6fc;--control-text:#3b354e;--control-muted:#746b87;--control-border:#c9c0dc;--control-selected:#77549f;--control-hover:#eee8f5}
+select,select option,select optgroup{color:var(--control-text);background-color:var(--control-bg)}
+select option:checked{color:#fff;background-color:var(--control-selected)}
+select option:disabled{color:var(--control-muted)}
+.workspace select,.reference-shell select,.reference-shell .ref-alarm-options select,.workspace input:not([type=checkbox]),.workspace textarea{color:var(--control-text);background-color:var(--control-bg);border-color:var(--control-border)}
+.workspace select,.reference-shell .ref-alarm-options select{background-image:none;cursor:pointer}
+.workspace select option,.workspace select optgroup{background:var(--control-bg);color:var(--control-text)}
+.workspace select option:checked{background:var(--control-selected);color:#fff}
+.workspace.light-theme select,.workspace.light-theme .ref-alarm-options select{background:rgba(252,249,255,.72);border-color:#cfc5df;color:#3b354e;box-shadow:inset 0 1px 2px #ffffff80}
+.workspace.light-theme select option,.workspace.light-theme select optgroup{background:#f8f5fc;color:#3b354e}
+.workspace.light-theme select option:checked{background:#e9dff2;color:#443052}
+.workspace.light-theme select:focus-visible{outline-color:#b699d1}
+.workspace.light-theme .ref-segments,
+.workspace.light-theme .ref-member-tabs>button:not(.active),
+.workspace.light-theme .ref-week>button:not(.active),
+.workspace.light-theme .ref-days>button:not(.active){background:#f3eef8;border-color:#d2c6df;color:#554662;box-shadow:none}
+.workspace.light-theme .ref-segments>button{color:#554662;background:transparent}
+.workspace.light-theme .ref-segments>button.selected,
+.workspace.light-theme .ref-member-tabs>button.active,
+.workspace.light-theme .ref-week>button.active,
+.workspace.light-theme .ref-days>button.active{background:#ded0ee;border-color:#b49acb;color:#503464;box-shadow:none}
+.workspace.light-theme .ref-alarm-options .secondary,
+.workspace.light-theme .ref-toolbar .secondary{background:#f3eef8;border-color:#d2c6df;color:#554662;box-shadow:none}
+.workspace input::placeholder,.workspace textarea::placeholder{color:var(--control-muted);opacity:1}
+.workspace select:focus-visible,.workspace input:focus-visible,.workspace textarea:focus-visible{outline:2px solid #a375f4;outline-offset:2px}
+.workspace input:disabled,.workspace select:disabled,.workspace textarea:disabled{opacity:.6;cursor:not-allowed;-webkit-text-fill-color:var(--control-muted)}
+.workspace input:-webkit-autofill,.scene input:-webkit-autofill{-webkit-text-fill-color:var(--control-text);box-shadow:0 0 0 1000px var(--control-bg) inset;caret-color:var(--control-text)}
+.workspace input[type=date],.workspace input[type=time]{color-scheme:inherit}
+.reference-shell .ref-alarm-time input[type=time]{background:transparent!important;color:var(--control-text)}
+.light-theme .ref-alarm-time input::-webkit-calendar-picker-indicator{filter:none}
+.reference-shell .ref-alarm-time input::-webkit-calendar-picker-indicator{filter:none;opacity:.8}
+.workspace input[type=file]::file-selector-button{background:var(--control-hover);color:var(--control-text);border:1px solid var(--control-border);border-radius:6px;padding:5px 9px;margin-right:10px;cursor:pointer}
+.workspace select,.workspace textarea,.workspace input{caret-color:var(--control-text)}
+.light-theme .ref-history>button:not(.secondary),.light-theme .ref-help-topics>button,.light-theme .ref-inbox-row,.light-theme .ref-permission,.light-theme .ref-appearance-options>div,.light-theme .ref-inline-label{color:#263b60}
+.light-theme .ref-history>button.selected,.light-theme .ref-help-topics>button.selected,.light-theme .ref-inbox-row.selected{color:#fff}
+.light-theme .ref-history small,.light-theme .ref-inbox-row small,.light-theme .ref-help-bottom small,.light-theme .ref-appearance-options>div>span,.light-theme .ref-day-title,.light-theme .sample-tag{color:#576c91}
+.light-theme .ref-history>button.selected small,.light-theme .ref-inbox-row.selected small{color:#d9dcf8}
+.light-theme .ref-inbox-row time{color:#4e648c}
+.light-theme .ref-inbox-row.selected time{color:#e2e8ff}
+.light-theme .ref-camera-preview{background:linear-gradient(125deg,#e5ecfb,#cbd9ef)!important}
+.light-theme .ref-camera-preview>svg,.light-theme .ref-camera-preview h2{color:#3c557a}
+.light-theme .ref-camera-preview p,.light-theme .ref-camera-controls>p,.light-theme .ref-security-footer p,.light-theme .ref-footnote,.light-theme .reference-page .empty{color:#536b92}
+.light-theme .ref-card-title>svg,.light-theme .ref-memory-icon,.light-theme .ref-help-topics>button>svg,.light-theme .ref-permission>svg{color:#7151ad}
+.light-theme .ref-memory-icon{background:#e4dcf6}
+.light-theme .sample-tag{background:#e4ebfb;border-color:#a7b8d9}
+.light-theme .timeline-row time,.light-theme .ref-pair-device p,.light-theme .ref-help-steps li,.light-theme .ref-memory-row p{color:#354e77}
+.light-theme .ref-pair-device h2,.light-theme .ref-help-bottom strong,.light-theme .ref-help-grid h2,.light-theme .ref-help-grid p,.light-theme .service-row>strong,.light-theme .task-row strong{color:#223a60}
+.light-theme .ref-help-bottom{color:#314d76}
+.light-theme .ref-history .secondary,.light-theme .secondary{color:#eaf1ff}
+.light-theme .ref-segments button{color:#c9d8f0}
+.light-theme .ref-member-tabs button.active,.light-theme .ref-week button.active,.light-theme .ref-segments button.selected{color:white}
+.light-theme .ref-results .empty h3,.light-theme .ref-results .empty p{color:#4a6087}
+.light-theme .feedback,.light-theme .info-box{background:#e2eafa;color:#304f79;border-color:#9eb3da}
+.light-theme .person-card small,.light-theme .note-card p,.light-theme .task-row small{color:#5b7093}
+.light-theme .privacy-chip,.light-theme .work-topbar .icon-button{color:#4d658b}
+.light-theme .sidebar-bottom,.light-theme .hello-card,.light-theme .no-device,.light-theme .timeline-row>div{color:#edf2ff}
+.light-theme .ref-search{background:#edf2ff;border-color:#9bafd3}
+.light-theme .ref-search>svg,.light-theme .ref-appearance-options>div>svg,.light-theme .ref-alarm-options svg{color:#6d569d}
+.light-theme .sample-rows small{color:#4e648a;border-color:#8fa8d0}
+.light-theme .ref-steps li>span{color:#fff}
+.light-theme .scope-row{color:#4e648a}
+.light-theme .scope-row>span{color:#e2ecff}
+@media(forced-colors:active){select,option,input,textarea{forced-color-adjust:auto}.ref-switch{border:1px solid ButtonText}}
+.backend-status{display:inline-flex;align-items:center;font-size:9px;line-height:1.5;padding:5px 9px;border:1px solid #68518a;border-radius:15px;color:#bf9ddd;background:#24183f}.backend-status.online{border-color:#346c6c;color:#a3ded8;background:#102d36}.backend-status.error,.backend-status.offline{border-color:#8c5b65;color:#e7b5c2;background:#392236}.light-theme .backend-status.online{background:#e4f2ee;color:#38645d;border-color:#adcfc6}.light-theme .backend-status.error,.light-theme .backend-status.offline{background:#f7e8ee;color:#813b54;border-color:#d6aaba}.primary:disabled{opacity:.55;cursor:wait}@media(max-width:780px){.backend-status{font-size:7px;padding:4px 6px;max-width:165px}}
+.alarm-service{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;font-size:11px;flex-wrap:wrap}.alarm-service .secondary{white-space:nowrap}.ref-chat-log{overflow:auto}.ref-bubble{overflow-wrap:anywhere}
+.ref-chat-avatar canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;mask-image:linear-gradient(black 85%,transparent)}.ref-camera-preview video,.reference-page video{max-width:100%;width:100%;max-height:480px;object-fit:contain;border-radius:12px;background:#050918}.ref-history label{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:12px}.ref-history label input[type=checkbox]{width:auto}.ref-history>small{font-size:10px;color:inherit;opacity:.75;line-height:1.5}.ref-inbox-row{overflow-wrap:anywhere}.ref-chat-log .text-button{display:block;margin-top:8px;font-size:10px}.reference-page .panel>form>p,.reference-page .panel>p{overflow-wrap:anywhere}
+.task-reminders{position:fixed;right:18px;bottom:18px;width:min(350px,calc(100vw - 36px));max-height:55vh;overflow:auto;z-index:25}.task-reminders>div{padding:10px 0;border-bottom:1px solid #6f69a233}.task-reminders button{margin:3px}.task-reminders p{font-size:12px}

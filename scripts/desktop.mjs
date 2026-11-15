@@ -1,0 +1,10 @@
+import {selectModel} from './local-model.mjs';
+import {spawn} from 'node:child_process';
+import {randomBytes} from 'node:crypto';
+import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const selection=selectModel(root,resolve(root,'models'));if(!selection)throw new Error('Offline model is missing.');
+process.env.ZYRA_BACKEND_PORT='4315';process.env.ZYRA_FRONTEND_DIR=resolve(root,'dist');process.env.ZYRA_MODELS_DIR=resolve(root,'models');process.env.ZYRA_LOCAL_AI_URL='http://127.0.0.1:11435';process.env.ZYRA_LOCAL_AI_KEY=randomBytes(32).toString('hex');process.env.ZYRA_MODEL_LABEL=selection.label;
+const children=[spawn(process.execPath,[resolve(root,'server/server.mjs')],{cwd:root,stdio:'ignore',windowsHide:true}),spawn(resolve(root,'runtime/llama/llama-server.exe'),['-m',selection.path,'--host','127.0.0.1','--port','11435','-c','4096','-t','4','-np','1','--log-disable','--cors-origins','localhost'],{cwd:root,env:{...process.env,LLAMA_API_KEY:process.env.ZYRA_LOCAL_AI_KEY},stdio:'ignore',windowsHide:true})];
+let ending=false;function stop(code=0){if(ending)return;ending=true;children.forEach(c=>c.kill());setTimeout(()=>process.exit(code),300).unref();}for(const child of children){child.on('error',()=>stop(1));child.on('exit',code=>stop(code||0));}process.on('SIGTERM',()=>stop());process.on('SIGINT',()=>stop());

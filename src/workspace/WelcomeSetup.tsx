@@ -1,0 +1,17 @@
+import ThemedSelect from './ThemedSelect';
+import {useState} from 'react';
+import type {Preferences} from './store';
+import {companionOrder,companionProfiles} from '../companionProfiles';
+import {useWelcomeVoice} from '../useWelcomeVoice';
+export default function WelcomeSetup({initial,onDone,onBack}:{initial:Preferences;onDone:(p:Preferences)=>void;onBack:()=>void}){
+ const [step,setStep]=useState(0),[draft,setDraft]=useState(initial);
+ const voice=useWelcomeVoice();
+ const update=(patch:Partial<Preferences>)=>setDraft({...draft,...patch});
+ return <main className="workspace setup-scene"><section className="setup-card"><div className="setup-brand">∞ JYRA AI <span>Local setup</span></div><div className="steps">{['About you','Your companion','Your routine'].map((s,i)=><span className={i===step?'current':''} key={s}>{i+1}. {s}</span>)}</div><h1>{['Let’s get to know you','Choose your companion','Make yourself at home'][step]}</h1><p className="muted">Your preferences stay on this device.</p><form onSubmit={e=>{e.preventDefault();voice.stop();if(step<2)setStep(step+1);else onDone(draft);}}>
+ {step===0&&<><label>Your name<input value={draft.name} onChange={e=>update({name:e.target.value})} maxLength={80} required placeholder="Your name" autoComplete="name"/></label><label>What should we call you?<input value={draft.nickname} onChange={e=>update({nickname:e.target.value})} maxLength={40} placeholder="A nickname, if you like"/></label><label>Interface language<ThemedSelect value={draft.language} onChange={e=>update({language:e.target.value})}><option>English</option><option>বাংলা</option></ThemedSelect></label><p className="muted">English voice is available in this preview. Full interface translation is planned.</p></>}
+ {step===1&&<><div className="setup-avatars">{companionOrder.map(id=><button className={draft.profile===id?'selected':''} aria-pressed={draft.profile===id} type="button" key={id} onClick={()=>{voice.stop();update({profile:id});}}><img src={companionProfiles[id].image} alt=""/><strong>{companionProfiles[id].name}</strong><small>{companionProfiles[id].label}</small></button>)}</div><button className="secondary" type="button" onClick={()=>void voice.play('signup',draft.profile)}>▷ Preview {companionProfiles[draft.profile].name}’s voice</button>{voice.voiceError&&<p role="status">{voice.voiceError}</p>}<label>Visual quality<ThemedSelect value={draft.quality} onChange={e=>update({quality:e.target.value})}><option>Lite</option><option>Balanced</option><option>Enhanced</option></ThemedSelect></label></>}
+ {step===2&&<><label className="toggle-row"><input type="checkbox" checked={draft.proactive} onChange={e=>update({proactive:e.target.checked})}/>Let my companion offer reminders</label><div className="two-columns"><label>Quiet hours start<input type="time" value={draft.quietStart} onChange={e=>update({quietStart:e.target.value})} required/></label><label>Quiet hours end<input type="time" value={draft.quietEnd} onChange={e=>update({quietEnd:e.target.value})} required/></label></div><div className="info-box">Camera, microphone and screen access stay off. These are preferences only; background reminders are not running yet.</div></>}
+ <div className="setup-actions"><button className="secondary" type="button" onClick={()=>{voice.stop();step?setStep(step-1):onBack();}}>← Back</button><button className="action" type="submit">{step===2?'Open my dashboard':'Continue →'}</button></div></form></section></main>;
+}
+
+

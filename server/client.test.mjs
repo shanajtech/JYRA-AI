@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomBytes,randomUUID} from 'node:crypto';
+import {createBackend} from './server.mjs';
+
+test('frontend bridge queues saves, isolates accounts and detects conflicts',async t=>{
+ const app=createBackend({databasePath:':memory:'});
+ await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));
+ const base=`http://127.0.0.1:${app.server.address().port}`;
+ const realFetch=globalThis.fetch,realStorage=globalThis.localStorage;
+ let cookie='';const local=new Map();
+ globalThis.localStorage={getItem:key=>local.get(key)??null,setItem:(key,value)=>local.set(key,String(value)),removeItem:key=>local.delete(key),clear:()=>local.clear(),key:i=>[...local.keys()][i]??null,get length(){return local.size;}};
+ globalThis.fetch=async(url,options={})=>{const response=await realFetch(base+url,{...options,headers:{...options.headers,Origin:'http://127.0.0.1:1430',...(cookie?{Cookie:cookie}:{})}});const updated=response.headers.get('set-cookie');if(updated)cookie=updated.split(';')[0];return response;};
+ t.after(async()=>{globalThis.fetch=realFetch;if(realStorage===undefined)delete globalThis.localStorage;else globalThis.localStorage=realStorage;await app.close();});
+ const api=await import('../src/backend.ts');
+ await api.initializeBackend();assert.equal(api.currentBackend().status,'online');assert.equal(api.currentBackend().user,null);
+ const password='test-only-'+randomBytes(20).toString('hex');
+ const a=await api.signUp({name:'Account A',email:'bridge-a@example.invalid',password});
+ const note={id:randomUUID(),title:'First draft',body:'Test only'};
+ api.saveToBackend('zyra.notes',[note]);api.saveToBackend('zyra.notes',[{...note,title:'Latest draft'}]);await api.flushSaves();
+ assert.equal(api.currentBackend().pending,0);assert.equal(api.currentBackend().error,'');
+ assert.equal(app.storage.all(a.id).notes.version,2);assert.equal(app.storage.all(a.id).notes.value[0].title,'Latest draft');
+ await api.signUp({name:'Account B',email:'bridge-b@example.invalid',password});
+ assert.deepEqual(api.backendValue('zyra.notes',[]),[]);
+ await api.signIn({email:'bridge-a@example.invalid',password,remember:false});assert.equal(api.backendValue('zyra.notes',[])[0].title,'Latest draft');
+ const demoNote={id:randomUUID(),title:'Legacy demo only',body:'Not a real account note'};local.set('zyra.notes',JSON.stringify([demoNote]));
+ await api.startDemo();assert.equal(api.currentBackend().user.demo,true);assert.deepEqual(api.backendValue('zyra.notes',[]),[demoNote]);
+ await api.signIn({email:'bridge-a@example.invalid',password,remember:false});assert.equal(api.backendValue('zyra.notes',[])[0].title,'Latest draft');
+ const other={...note,title:'Saved in another window'};app.storage.write(a.id,'notes',[other],2);
+ api.saveToBackend('zyra.notes',[{...note,title:'Conflicting draft'}]);await api.flushSaves();assert.match(api.currentBackend().error,/another window/);assert.equal(app.storage.all(a.id).notes.value[0].title,other.title);
+ await api.signIn({email:'bridge-a@example.invalid',password,remember:false});assert.equal(api.currentBackend().error,'');
+ await api.signOut();assert.equal(api.currentBackend().user,null);
+});

@@ -1,0 +1,41 @@
+{
+  "name": "zyra-ai",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "backend": "node --env-file-if-exists=.env server/server.mjs",
+    "dev:all": "node --env-file-if-exists=.env scripts/dev.mjs",
+    "test:backend": "node --test server/server.test.mjs server/client.test.mjs server/features.test.mjs server/integrations.test.mjs server/gateway.test.mjs server/desktop.test.mjs server/reminders.test.mjs server/permissions.test.mjs server/personal-reminders.test.mjs server/support.test.mjs",
+    "setup:ai": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-ai.ps1",
+    "test:offline": "node --test server/offline.test.mjs",
+    "setup:speech": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-speech.ps1",
+    "check:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-windows.ps1",
+    "setup:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-windows.ps1",
+    "build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@vladmandic/human": "^3.3.6",
+    "imapflow": "^2.11.0",
+    "mailparser": "^3.14.3",
+    "nodemailer": "^10.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^6.0.2",
+    "esbuild": "^0.28.2",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.16"
+  }
+}

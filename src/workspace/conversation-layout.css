@@ -1,0 +1,24 @@
+/* Keep the composer visible; only the message stream scrolls. */
+.figma-app:has(.fg-conversation){height:100dvh;min-height:0;overflow:hidden}
+.figma-app:has(.fg-conversation)>.fg-sidebar{min-height:0;max-height:100dvh;overflow-y:auto}
+.figma-app:has(.fg-conversation)>.fg-main{display:flex;flex-direction:column;min-height:0;padding-bottom:20px}
+.figma-app:has(.fg-conversation) .fg-topbar{flex-shrink:0}
+.fg-content:has(>.fg-conversation){display:flex;flex:1;min-height:0;padding-top:24px}
+.fg-conversation{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0}
+.fg-conversation>h1,.fg-conversation-date{flex-shrink:0}
+.fg-conversation .fg-conversation-grid{flex:1;min-height:0;margin-top:24px;overflow:hidden;align-items:stretch}
+.fg-conversation .fg-conversation-stream{min-height:0;max-height:none;padding-left:8px;padding-right:12px;overscroll-behavior:contain;scrollbar-gutter:stable}
+.fg-conversation .fg-voice-panel{min-height:0;overflow-y:auto}
+.fg-conversation .fg-voice-portrait{max-height:clamp(120px,32dvh,400px);aspect-ratio:auto}
+.fg-conversation .fg-voice-portrait canvas{height:100%;object-fit:contain}
+.fg-conversation .fg-voice-panel h2{margin-top:16px}
+.fg-conversation .fg-home-composer{flex-shrink:0;margin-top:16px}
+@media(max-width:760px){
+ .figma-app:has(.fg-conversation)>.fg-main{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+ .fg-content:has(>.fg-conversation){padding-top:16px}
+ .fg-conversation>h1{font-size:24px;line-height:32px;margin-bottom:8px}
+ .fg-conversation .fg-conversation-grid{grid-template-columns:minmax(0,1fr);margin-top:16px}
+ .fg-conversation .fg-voice-panel{display:none}
+ .fg-conversation .fg-conversation-stream{padding-left:0;padding-right:4px}
+ .fg-conversation .fg-home-composer{margin-top:12px;gap:8px}
+}

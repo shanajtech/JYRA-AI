@@ -1,0 +1,2 @@
+import {useBackend} from './backend';
+export default function BackendStatus(){const backend=useBackend();return <span className={'backend-status '+(backend.error?'error':backend.status)} role="status" title={backend.error||'Local Node.js service with SQLite storage'}>{backend.error?'Save needs attention':backend.status==='starting'?'Connecting to local backend…':backend.status==='offline'?'Browser only · backend offline':backend.pending?'Saving to database…':backend.user?`${backend.user.demo?'Local demo':'Local account'} · database connected`:'Local backend ready'}</span>;}
