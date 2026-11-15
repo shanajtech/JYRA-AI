@@ -29,14 +29,14 @@ export default function ChatPanel({p,initialDraft='',onReviewPermissions}:{p:Pre
  useEffect(()=>{log.current?.scrollTo({top:log.current.scrollHeight,behavior:'smooth'});},[messages,busy]);
  useEffect(()=>{setActive(null);setMessages([]);},[p.privateSession]);
  function mute(){voiceRun.current++;voice.stop();}
- async function read(text:string){mute();setError('');const run=voiceRun.current;try{const r=await request<{audio:string}>('/speech/synthesize','POST',{text:text.slice(0,2000),profile:p.profile,online:!!p.onlineVoice},AbortSignal.timeout(45000));if(run===voiceRun.current)await voice.play(r.audio,p.profile);}catch(e){if(run===voiceRun.current)setError((e as Error).message);}}
+ async function read(text:string){mute();setError('');if(developerAnswer(text,p.language)){await voice.play(/[\u0980-\u09ff]/.test(text)?'developer-bn':'developer-en',p.profile);return;}const run=voiceRun.current;try{const r=await request<{audio:string}>('/speech/synthesize','POST',{text:text.slice(0,2000),profile:p.profile,online:!!p.onlineVoice},AbortSignal.timeout(45000));if(run===voiceRun.current)await voice.play(r.audio,p.profile);}catch(e){if(run===voiceRun.current)setError((e as Error).message);}}
  async function send(){
   if(busy||recorder.recording||!draft.trim())return;mute();
   const next:Message[]=[...messages,{role:'user',content:draft.trim()}];setMessages(next);setDraft('');setError('');setBusy(true);
   const c=new AbortController();controller.current=c;
   try{await flushSaves();const identity=developerAnswer(next[next.length-1].content,p.language);const r=identity?{answer:identity}:await streamChat({messages:next.slice(-12)},AbortSignal.any([c.signal,AbortSignal.timeout(125000)]),text=>setMessages([...next,{role:'assistant',content:text}]));const complete:Message[]=[...next,{role:'assistant',content:r.answer.slice(0,4000)}];setMessages(complete);setStatus('Local AI · replies stay on this computer');
    if(!p.privateSession){const id=active||uid();setActive(id);saveHistory([{id,title:complete[0].content.slice(0,80),updatedAt:Date.now(),messages:complete.slice(-24)},...history.filter(h=>h.id!==id)].slice(0,50));}
-   if(spoken){if(identity)void voice.play(p.language==='বাংলা'?'developer-bn':'developer-en',p.profile);else if(!publicPreview)void read(r.answer);}
+   if(spoken){if(identity)void voice.play(/[\u0980-\u09ff]/.test(r.answer)?'developer-bn':'developer-en',p.profile);else if(!publicPreview)void read(r.answer);}
   }catch(e){if(!c.signal.aborted)setError((e as Error).message);}
   finally{setBusy(false);controller.current=null;}
  }
