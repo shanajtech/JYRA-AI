@@ -15,3 +15,9 @@
 - Login/registration design and the remaining Figma reference screens require follow-up.
 
 The repository is a snapshot for further development, not a finished release.
+## Online backend progress (2026-11-15)
+
+- Added a deployable Vercel text-chat function using the user's Groq key, with masked opt-in connection, streamed responses and explicit saved-memory context.
+- The live website still needs the owner's real key to verify genuine provider replies and Bengali quality. No Groq account, billing plan or API key was created automatically.
+- Cloud memory/history remain in the browser. Cross-device durable accounts, cloud voice and background jobs remain incomplete.
+- Cloud integration tests use a controlled provider fixture. The owner's reported memory/Bengali issues are not marked resolved solely from those tests.

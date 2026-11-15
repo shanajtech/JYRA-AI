@@ -1,3 +1,4 @@
+import {cloudKey} from './cloud.ts';
 import {publicPreview,previewMessage} from './deployment.ts';
 import {useSyncExternalStore} from 'react';
 export interface LocalUser{id:string;name:string;email:string|null;demo:boolean}
@@ -67,13 +68,12 @@ export async function startDemo(){
 export async function signOut(){await flushSaves();try{await request('/auth/logout','POST',{});await activate(null);}catch(error){patch({error:'Could not sign out. Retry when the local service is available.'});throw error;}}
 export function currentBackend(){return snapshot;}
 
-export async function streamChat(body:unknown,signal:AbortSignal,onText:(text:string)=>void):Promise<{answer:string}>{
- if(publicPreview)throw new Error(previewMessage);
- const response=await fetch('/api/chat/stream',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal});
+export async function streamChat(body:unknown,signal:AbortSignal,onText:(text:string)=>void,context?:{language:string;privateSession:boolean;savedNotes:unknown[]}):Promise<{answer:string}>{
+ const key=publicPreview?cloudKey():'';if(publicPreview&&!key)throw new Error('Connect online AI before sending a message.');
+ const response=await fetch(publicPreview?'/api/cloud/chat':'/api/chat/stream',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',...(publicPreview?{Authorization:`Bearer ${key}`}:{})},body:JSON.stringify(publicPreview?{...(body as object),...context,action:'chat'}:body),signal});
  if(!response.ok){const data=await response.json();throw new Error(data.error||'Chat unavailable.');}
  if(!response.body)throw new Error('Chat response is missing.');
  const reader=response.body.getReader(),decoder=new TextDecoder();let pending='',answer='',complete=false;
  try{while(true){const {value,done}=await reader.read();pending+=decoder.decode(value||new Uint8Array(),{stream:!done});let at;while((at=pending.indexOf('\n'))>=0){const line=pending.slice(0,at);pending=pending.slice(at+1);if(!line.trim())continue;const data=JSON.parse(line);if(data.error)throw new Error(data.error);if(typeof data.text==='string')onText(data.text);if(data.done){answer=data.answer;complete=true;}}if(done)break;}}finally{reader.releaseLock();}
  if(!complete)throw new Error('The reply was interrupted. Please try again.');return {answer};
 }
-

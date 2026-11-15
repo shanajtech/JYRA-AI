@@ -46,7 +46,16 @@ This is not a production-ready AI assistant. Sample Figma task/briefing screens 
 
 ## Vercel website preview
 
-`vercel.json` builds the Vite frontend with `VITE_PUBLIC_PREVIEW=true`. The production website explicitly labels itself as a preview. Companion entry can open the browser-only dashboard; local AI, SQLite accounts, online speech service and cloud synchronization are not deployed by this configuration. Browser edits are not a cloud account or a backend connection. Local Windows development keeps its existing backend behavior.
+`vercel.json` builds the Vite frontend with `VITE_PUBLIC_PREVIEW=true`. The production website explicitly labels itself as a preview. Companion entry can open the browser-only dashboard; local AI, SQLite accounts, online speech service and cloud synchronization are not deployed by this configuration. Online text chat now has a separate Groq connection; see below. Browser edits are not a cloud account or a backend connection. Local Windows development keeps its existing backend behavior.
 
 Deploy with `npx vercel --prod` after signing in. `.vercelignore` excludes credentials, personal data, local runtimes and dependencies from the upload.
 
+## Online text AI (Groq free-plan connection)
+
+The website now includes a stateless Vercel Function at `/api/cloud/chat`. Open Conversation → Connect online AI, create a key in your own Groq account, and enter it in the masked connection dialog. Do not paste a key into chat. Verify that the Groq account remains on its Free plan; model availability and provider limits may change. No shared paid key or new subscription is provisioned by this project.
+
+The key is held only in JavaScript memory until disconnect/reload, sent to JYRA's HTTPS function as a bearer credential, and forwarded only to Groq's official endpoint. It is not stored in localStorage, SQLite or application logs. The function validates origin, payload, roles and memories, rejects redirects, enforces a bounded per-instance limiter, supports cancellation, and returns streamed text. Provider rate limits still apply across all instances. Production protections should be revisited before a general public launch.
+
+After explicit consent, the current conversation (up to 12 messages) and saved memory (up to 20 entries) are sent to Groq. Private sessions omit saved memories and do not save new history. Memory/history in this deployment are browser-local, not cloud-synced accounts. Windows local mode retains SQLite storage and local inference. Cloud voice, PC automation and phone pairing are not enabled by the Groq connection.
+
+`npm run test:backend` includes cloud handler tests with a controlled provider fixture. A real Groq key is still needed for a genuine end-to-end provider test; passing fixture tests does not establish Bengali response quality in the owner's account.
