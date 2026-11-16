@@ -87,3 +87,5 @@ test('developer identity answers English, Bangla and Banglish without inventing 
   const result=await ai.chat({id:'identity'},{messages:[{role:'user',content:text}]},{language});assert.match(result.answer,/Shanaj Akter/);assert.match(result.answer,/JYRA/);assert.doesNotMatch(result.answer,/trained|foundation model|নতুন মডেল/);
  }
 });
+
+test('local AI recalls the saved profile name and withholds it from private sessions',async()=>{const ai=createAI({fetcher:async()=>{throw Error('No provider request expected');}}),message={messages:[{role:'user',content:'What is my name?'}]};assert.equal((await ai.chat({id:'test-profile'},message,{name:'Profile Check',language:'English'})).answer,'Your name is Profile Check.');assert.match((await ai.chat({id:'test-profile'},message,{name:'Profile Check',language:'English',privateSession:true})).answer,/don't have your name/);});
