@@ -17,7 +17,8 @@
     "check:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-windows.ps1",
     "setup:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-windows.ps1",
     "build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1",
-    "setup:cloud": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/configure-cloud.ps1"
+    "setup:cloud": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/configure-cloud.ps1",
+    "test:cloud-backup": "node scripts/test-cloud-backup.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

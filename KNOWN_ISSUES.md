@@ -33,3 +33,10 @@ The repository is a snapshot for further development, not a finished release.
 - Encrypted manual cloud backup/transfer, short online dictation and configured support SMTP endpoints have been implemented with controlled tests. Real Redis/Groq/SMTP connectivity and Bengali quality are not established by those tests.
 - Cloud backup is optional/manual with a 30-day browser session and 90-day storage retention. It is not a permanent cloud account or automatic sync; retain local/downloaded copies.
 - Spoken cloud replies, permanent cloud login, separate family accounts, general PC automation, phone calls/Messenger actions, background phone push and a verified release installer remain incomplete. They must not be advertised as complete.
+
+## Live database verification (2026-11-16)
+
+- The owner’s persistent Upstash Free database is configured in production; credentials remain server-only. A production redeployment applied the settings.
+- Real HTTPS tests passed: synthetic backup save/read, stale-version conflict rejection, isolation from another anonymous session, one-time device transfer and replay rejection. Test sessions were separate from the owner’s browser; no personal notes were uploaded. Small synthetic test records expire under the normal retention policy.
+- GROQ_API_KEY is still absent from production. Shared chat and online dictation cannot be tested or enabled until the owner enters it. SMTP support sender remains unconfigured.
+- npm run test:cloud-backup repeats these live checks with synthetic data. It creates expiring test records; it is not part of the ordinary offline backend test command.

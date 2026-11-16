@@ -78,3 +78,7 @@ Saved alarms and task reminders execute while the dashboard remains open and the
 npm run test:backend includes controlled provider/Redis/SMTP fixtures. These tests establish request handling and security behavior; they do not establish actual provider connectivity or Bengali quality in the owner's account. Configure the server values, then test real chat, dictation, backup transfer and support delivery before release.
 
 Spoken cloud replies, permanent cloud login/registration, separate family accounts, general autonomous PC control, phone calls/Messenger actions, background phone push and a verified production Windows installer remain unfinished. The app must not claim those features are operational. See KNOWN_ISSUES.md.
+
+## Live backup smoke test
+
+Run `npm run test:cloud-backup` only when you intend to test the deployed database. It uses isolated anonymous sessions and synthetic notes, checks persistence/isolation/version conflicts/device-code replay, and prints no credentials or session values. Small test records remain until their retention expiry. Set ZYRA_TEST_SITE_URL to another HTTPS site origin to check an experimental deployment. The owner’s browser notes/cookies are not accessed.
