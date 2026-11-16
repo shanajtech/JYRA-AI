@@ -27,14 +27,30 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
-    "resources": {"resources/": "resources/"},
+    "targets": [
+      "nsis"
+    ],
+    "resources": {
+      "resources/dist/": "resources/dist/",
+      "resources/server/": "resources/server/",
+      "resources/scripts/": "resources/scripts/",
+      "resources/runtime/": "resources/runtime/",
+      "resources/node.exe": "resources/node.exe",
+      "resources/models/ggml-base.bin": "resources/models/ggml-base.bin",
+      "resources/PACKAGING-NOTE.txt": "resources/PACKAGING-NOTE.txt"
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "nsis": {
+        "compression": "zlib",
+        "installerHooks": "installer-hooks.nsh"
+      }
+    }
   }
 }

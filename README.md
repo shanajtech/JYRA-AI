@@ -82,3 +82,7 @@ Spoken cloud replies, permanent cloud login/registration, separate family accoun
 ## Live backup smoke test
 
 Run `npm run test:cloud-backup` only when you intend to test the deployed database. It uses isolated anonymous sessions and synthetic notes, checks persistence/isolation/version conflicts/device-code replay, and prints no credentials or session values. Small test records remain until their retention expiry. Set ZYRA_TEST_SITE_URL to another HTTPS site origin to check an experimental deployment. The owner’s browser notes/cookies are not accessed.
+
+### Windows preview packaging
+
+Keep the setup EXE and JYRA-offline-model.gguf together. NSIS preflight requires the model file and copies it into the application resources after installing the core payload. The GGUF is deliberately excluded from embedded resources to avoid NSIS data-block limits. npm run build:windows copies the selected prepared model beside setup. Optional prepared Python/voice-deps folders support explicitly enabled Microsoft speech; model quality and real-device behavior need release testing. No background phone/control capability is implied by this installer.
