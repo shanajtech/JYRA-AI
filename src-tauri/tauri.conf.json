@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ZYRA AI",
+  "productName": "JYRA AI",
   "version": "0.1.0",
   "identifier": "com.zyra.desktop",
   "build": {
@@ -14,7 +14,7 @@
       {
         "label": "main",
         "visible": false,
-        "title": "ZYRA AI",
+        "title": "JYRA AI",
         "width": 1280,
         "height": 800,
         "minWidth": 960,

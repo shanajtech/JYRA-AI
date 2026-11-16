@@ -1,4 +1,6 @@
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'windows-tools.ps1')
+Enable-JyraWindowsTools -ProjectRoot ([IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..')))
 $rust = Get-Command rustc.exe -ErrorAction SilentlyContinue
 $cargo = Get-Command cargo.exe -ErrorAction SilentlyContinue
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
