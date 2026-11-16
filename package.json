@@ -10,7 +10,7 @@
     "tauri": "tauri",
     "backend": "node --env-file-if-exists=.env server/server.mjs",
     "dev:all": "node --env-file-if-exists=.env scripts/dev.mjs",
-    "test:backend": "node --test server/server.test.mjs server/client.test.mjs server/features.test.mjs server/integrations.test.mjs server/gateway.test.mjs server/desktop.test.mjs server/reminders.test.mjs server/permissions.test.mjs server/personal-reminders.test.mjs server/support.test.mjs server/cloud.test.mjs server/browser-services.test.mjs server/shared-cloud.test.mjs",
+    "test:backend": "node --test server/server.test.mjs server/client.test.mjs server/features.test.mjs server/integrations.test.mjs server/gateway.test.mjs server/desktop.test.mjs server/reminders.test.mjs server/permissions.test.mjs server/personal-reminders.test.mjs server/support.test.mjs server/cloud.test.mjs server/browser-services.test.mjs server/shared-cloud.test.mjs server/device-voice.test.mjs",
     "setup:ai": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-ai.ps1",
     "test:offline": "node --test server/offline.test.mjs",
     "setup:speech": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-speech.ps1",

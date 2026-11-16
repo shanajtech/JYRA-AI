@@ -46,3 +46,13 @@ The repository is a snapshot for further development, not a finished release.
 - Owner saved GROQ_API_KEY; production redeployed successfully. Real Groq model/session verification passed. Shared visitors need no individual key.
 - Actual streamed replies passed English arithmetic (43), Banglish input with Bengali-script response, and a synthetic saved-memory preference. Complete response timings were 859, 1133 and 641 ms in this small test; no general latency guarantee.
 - The memory check passed explicitly supplied context, not automatic saving. Real microphone transcription, spoken replies and broader Bengali quality remain unverified. SMTP sender remains unconfigured. Earlier missing-key entries describe historical state.
+
+## Website audit and fixes (2026-11-16)
+
+- Browser UI verified: connection consent, real reply, Remember this, a fresh conversation recalling a synthetic preference, and persistence of that note after reload. One clearly labelled synthetic test note remains; personal data was not removed.
+- All nine main dashboard sections opened. Public Devices previously requested unavailable local endpoints; it now exposes the working encrypted backup/transfer flow and explains browser-only limits.
+- Real Groq transcription returned the exact generated English test sentence. No owner microphone was opened. Actual microphone hardware, noisy speech and Bengali recognition quality still need user-device testing.
+- Fixed chat cancellation when leaving the page or changing private-session mode, a missing memory-save error message, duplicate comparison for long notes, the 500-memory limit and microphone acquisition cancellation.
+- Listen now supports an identified installed local female English/Bengali device voice, with speech cancellation. Remote browser voices and wrong-language fallbacks are excluded. Automatic reading is opt-in on the public site. Welcome uses the existing female recording. This does not provide universal Bengali TTS or audio-driven lip motion for browser synthesis.
+- Voice names/language selection are tested with fixtures; real playback availability depends on the device. See https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices and https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService .
+- SMTP sender, permanent cloud accounts, shared family accounts, general remote PC/phone actions, closed-browser push and final Windows release remain incomplete.

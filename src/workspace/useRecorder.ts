@@ -22,7 +22,7 @@ export function useRecorder(onText:(text:string)=>void,language:string){
    const stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true},video:false});
    acquired=stream;
    if(epoch!==generation.current){stream.getTracks().forEach(t=>t.stop());return;}
-   const context=new AudioContext();await context.resume();const source=context.createMediaStreamSource(stream),processor=context.createScriptProcessor(4096,1,1),mute=context.createGain();mute.gain.value=0;
+   const context=new AudioContext();await context.resume();if(epoch!==generation.current){stream.getTracks().forEach(t=>t.stop());await context.close();return;}const source=context.createMediaStreamSource(stream),processor=context.createScriptProcessor(4096,1,1),mute=context.createGain();mute.gain.value=0;
    const chunks:Float32Array[]=[];let size=0;processor.onaudioprocess=e=>{if(size<context.sampleRate*20){const data=e.inputBuffer.getChannelData(0).slice();chunks.push(data);size+=data.length;}};
    source.connect(processor);processor.connect(mute);mute.connect(context.destination);setRecording(true);deviceState('microphone',true);
    const timer=setTimeout(()=>void finish(),20000);

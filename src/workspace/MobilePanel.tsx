@@ -1,8 +1,17 @@
 import FigmaIcon from '../figma/FigmaIcon';
 import {useEffect,useState} from 'react';
 import {request} from '../backend';
+import {publicPreview} from '../deployment';
+import CloudBackup from './CloudBackup';
+import {useLocalData} from './store';
+import type {Note} from './store';
 type Status={ready:boolean;url:string|null;message:string;devices:{id:string;name:string;permissions:string[];expires_at:number}[]};
-export default function MobilePanel(){
+export default function MobilePanel(){return publicPreview?<CloudDevices/>:<LocalDevices/>;}
+function CloudDevices(){
+ const [notes,saveNotes]=useLocalData<Note[]>('zyra.notes',[]);
+ return <div className="fg-device-grid"><div><section className="fg-card fg-device-list"><h2>Your devices</h2><div className="fg-device-row"><FigmaIcon name="globe"/><div><h3>This browser</h3><p>Your memories and history are stored here.</p><small className="fg-success">Website connected</small></div></div><p>Open <a href="https://jyra-ai.vercel.app" target="_blank" rel="noreferrer">jyra-ai.vercel.app</a> in Chrome on your phone to chat there.</p></section><section className="fg-card fg-device-benefits"><h2>What travels with you</h2><p>Transfer saved memories and conversation history through an encrypted, reviewed backup. Each transfer code works once and expires after 10 minutes.</p><p>Alarms and family tasks stay in their own browser. Background phone notifications, calls and remote PC control are not connected.</p></section></div><aside className="fg-card fg-raised fg-pair-card"><FigmaIcon name="phone"/><h2>Link another browser</h2><p>Upload a backup here. Create a private device code, then use Cloud backup & device transfer on your phone to enter that code and review the copy.</p><CloudBackup notes={notes} saveNotes={saveNotes}/><p>This is manual transfer. It does not create a permanent account or automatically synchronize devices.</p></aside></div>;
+}
+function LocalDevices(){
  const [status,setStatus]=useState<Status|null>(null),[error,setError]=useState(''),[chat,setChat]=useState(true),[tasks,setTasks]=useState(false),[code,setCode]=useState<{code:string;expiresAt:number;url:string}|null>(null),[busy,setBusy]=useState(false);
  async function refresh(){try{setStatus(await request<Status>('/mobile/status'));}catch(e){setError((e as Error).message);}}
  useEffect(()=>{void refresh();},[]);
