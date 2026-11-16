@@ -16,3 +16,6 @@ test('spoken name expands pronunciation without changing displayed branding',()=
  assert.equal(spokenText('আমি JYRA।'),'আমি জায়রা।');
  assert.equal(spokenText('x'.repeat(3000)).length,2000);
 });
+
+import {chatMemory} from '../src/services/chat-memory.mjs';
+test('profile name participates in bounded chat context while private mode excludes all saved context',()=>{const notes=Array.from({length:30},(_,i)=>({id:String(i),title:'Note',body:'x'.repeat(800)}));const result=chatMemory(notes,{name:'Test Name',nickname:'Friend'});assert.equal(result.length,20);assert.match(result[0].body,/My name is Test Name/);assert.match(result[0].body,/nickname is Friend/);assert.equal(result[1].body.length,600);assert.equal(chatMemory(notes,{name:''})[0].id,'0');assert.deepEqual(chatMemory(notes,{name:'Test Name',privateSession:true}),[]);});
