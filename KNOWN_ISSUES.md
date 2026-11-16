@@ -66,3 +66,9 @@ The repository is a snapshot for further development, not a finished release.
 - Actual installer execution completed in a new isolated D: preview directory, preserving existing app data. Installed packaged services passed isolated SQLite/profile recall, optional Microsoft Bengali speech generation, offline model loading and the basic arithmetic reply. No credentials or user databases are shipped.
 - Five Gmail support settings are saved in Vercel; ZYRA_SUPPORT_SMTP_PASSWORD is still required. No real support email has been sent or delivered.
 - Tailscale reported the PC Running but zero online Android peers at this check. ADB inventory was unavailable. Physical Android calls/Messenger, microphone behavior and continuous observation are not verified or implemented as general remote actions.
+
+## Support email activated (2026-11-16)
+
+- Owner saved ZYRA_SUPPORT_SMTP_PASSWORD as a production Secret and the site was redeployed. Readiness now returns configured:true.
+- With explicit owner approval, one generic connection-test email was submitted through the live support API to the configured owner Gmail address. HTTP 201 and accepted-by-mail-server were returned. No personal chat or memory was included.
+- SMTP acceptance is verified; recipient inbox placement was not inspected and is not guaranteed by this result. Earlier missing-password statements are historical.
