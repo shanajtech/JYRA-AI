@@ -40,3 +40,9 @@ The repository is a snapshot for further development, not a finished release.
 - Real HTTPS tests passed: synthetic backup save/read, stale-version conflict rejection, isolation from another anonymous session, one-time device transfer and replay rejection. Test sessions were separate from the owner’s browser; no personal notes were uploaded. Small synthetic test records expire under the normal retention policy.
 - GROQ_API_KEY is still absent from production. Shared chat and online dictation cannot be tested or enabled until the owner enters it. SMTP support sender remains unconfigured.
 - npm run test:cloud-backup repeats these live checks with synthetic data. It creates expiring test records; it is not part of the ordinary offline backend test command.
+
+## Live AI verification (2026-11-16)
+
+- Owner saved GROQ_API_KEY; production redeployed successfully. Real Groq model/session verification passed. Shared visitors need no individual key.
+- Actual streamed replies passed English arithmetic (43), Banglish input with Bengali-script response, and a synthetic saved-memory preference. Complete response timings were 859, 1133 and 641 ms in this small test; no general latency guarantee.
+- The memory check passed explicitly supplied context, not automatic saving. Real microphone transcription, spoken replies and broader Bengali quality remain unverified. SMTP sender remains unconfigured. Earlier missing-key entries describe historical state.
